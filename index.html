@@ -92,16 +92,16 @@
     <header class="fixed top-0 w-full z-50 transition-all duration-300">
         <div class="glass border-b border-white/5 bg-slate-900/50 backdrop-blur-xl">
             <div class="max-w-4xl mx-auto px-6 py-4">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center justify-between gap-6">
                     <!-- Logo -->
-                    <div class="flex items-center">
+                    <div class="flex items-center shrink-0">
                         <h1 class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-pastel-purple to-pastel-blue hover:to-white transition-all cursor-default select-none">
                             PRISM
                         </h1>
                     </div>
 
                     <!-- Categories -->
-                    <nav class="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar mask-gradient">
+                    <nav class="flex gap-2 overflow-x-auto no-scrollbar min-w-0">
                         <button onclick="loadCategory('tech')" id="btn-tech" class="nav-btn active-nav">Tech</button>
                         <button onclick="loadCategory('ai')" id="btn-ai" class="nav-btn">AI</button>
                         <button onclick="loadCategory('design')" id="btn-design" class="nav-btn">Design</button>
@@ -115,6 +115,8 @@
                         <button onclick="loadCategory('food')" id="btn-food" class="nav-btn">Food</button>
                         <button onclick="loadCategory('travel')" id="btn-travel" class="nav-btn">Travel</button>
                         <button onclick="loadCategory('health')" id="btn-health" class="nav-btn">Health</button>
+                        <div class="w-px h-6 bg-white/10 mx-1 self-center"></div>
+                        <button onclick="loadCategory('other')" id="btn-other" class="nav-btn text-slate-500">Other</button>
                     </nav>
                 </div>
             </div>

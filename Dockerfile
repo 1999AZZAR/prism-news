@@ -16,5 +16,5 @@ ENV REDIS_PORT=6379
 # Expose port
 EXPOSE 5051
 
-# Run with Gunicorn (production server)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5051", "server:app"]
+# Run directly with Python to support the background thread properly
+CMD ["python", "server.py"]

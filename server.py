@@ -9,16 +9,31 @@ import redis
 import sqlite3
 import threading
 import schedule
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 app = flask.Flask(__name__, static_folder='.')
 
 # --- CONFIG ---
 CACHE_DURATION = 600
 HN_API = 'https://hacker-news.firebaseio.com/v0'
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+USER_AGENT = 'Mozilla/5.0 (compatible; PrismBot/1.0; +http://prism.glassgallery.my.id)'
 DB_FILE = 'prism.db'
+
+# --- CLASSIFICATION KEYWORDS ---
+CATEGORY_KEYWORDS = {
+    'tech': ['software', 'linux', 'apple', 'google', 'microsoft', 'code', 'app', 'iphone', 'android', 'crypto', 'data', 'cyber', 'robot'],
+    'ai': ['ai', 'gpt', 'llm', 'machine learning', 'neural', 'openai', 'deepmind', 'algorithm', 'intelligence'],
+    'gaming': ['game', 'nintendo', 'xbox', 'ps5', 'playstation', 'steam', 'esports', 'zelda', 'mario', 'rpg', 'fps'],
+    'science': ['space', 'nasa', 'research', 'study', 'physics', 'biology', 'climate', 'planet', 'quantum', 'lab'],
+    'business': ['stock', 'market', 'ceo', 'revenue', 'economy', 'bank', 'invest', 'trade', 'startup', 'ipo'],
+    'music': ['song', 'album', 'tour', 'band', 'artist', 'concert', 'track', 'remix', 'vinyl'],
+    'sports': ['score', 'team', 'league', 'cup', 'nba', 'nfl', 'football', 'soccer', 'cricket', 'champion', 'match'],
+    'food': ['recipe', 'cook', 'delicious', 'restaurant', 'taste', 'dinner', 'lunch', 'breakfast', 'chef', 'baking'],
+    'entertainment': ['movie', 'film', 'series', 'netflix', 'hollywood', 'actor', 'drama', 'cinema', 'show', 'trailer'],
+    'health': ['health', 'diet', 'wellness', 'disease', 'medical', 'therapy', 'mental', 'fitness', 'doctor', 'virus']
+}
 
 # --- REDIS ---
 redis_host = os.environ.get('REDIS_HOST', 'localhost')
@@ -60,91 +75,43 @@ def init_db():
                 ('TechCrunch', 'https://techcrunch.com/feed/', 'tech', 'rss'),
                 ('Ars Technica', 'https://feeds.arstechnica.com/arstechnica/index', 'tech', 'rss'),
                 ('Engadget', 'https://www.engadget.com/rss.xml', 'tech', 'rss'),
-                ('9to5Mac', 'https://9to5mac.com/feed/', 'tech', 'rss'),
-                ('Android Authority', 'https://www.androidauthority.com/feed/', 'tech', 'rss'),
-                ('GSMArena', 'https://www.gsmarena.com/rss-news-reviews.php3', 'tech', 'rss'),
-                ('Mashable', 'https://mashable.com/feeds/rss/all', 'tech', 'rss'),
                 
-                # AI (Mixed sources as specific AI RSS is rare in general lists, using Tech subsets + specialized)
-                ('MIT Tech Review (AI)', 'https://www.technologyreview.com/feed/', 'ai', 'rss'), # General feed, often high AI content
+                # AI
+                ('MIT Tech Review (AI)', 'https://www.technologyreview.com/feed/', 'ai', 'rss'),
                 ('VentureBeat (AI)', 'https://venturebeat.com/category/ai/feed/', 'ai', 'rss'),
                 ('Google AI Blog', 'http://feeds.feedburner.com/blogspot/gJZg', 'ai', 'rss'),
-                ('OpenAI Blog', 'https://openai.com/blog/rss.xml', 'ai', 'rss'),
                 
                 # DESIGN
                 ('Smashing Magazine', 'https://www.smashingmagazine.com/feed/', 'design', 'rss'),
                 ('Design Milk', 'https://design-milk.com/feed/', 'design', 'rss'),
-                ('Creative Bloq', 'https://www.creativebloq.com/feed', 'design', 'rss'),
-                ('Abduzeedo', 'https://abduzeedo.com/feed.xml', 'design', 'rss'),
-                ('A List Apart', 'https://alistapart.com/main/feed', 'design', 'rss'),
                 
                 # WORLD
                 ('BBC News (World)', 'http://feeds.bbci.co.uk/news/world/rss.xml', 'world', 'rss'),
                 ('The Guardian (World)', 'https://www.theguardian.com/world/rss', 'world', 'rss'),
                 ('Al Jazeera', 'https://www.aljazeera.com/xml/rss/all.xml', 'world', 'rss'),
-                ('Reuters (World)', 'https://www.reutersagency.com/feed/?best-topics=world&post_type=best', 'world', 'rss'), # Reuters RSS is tricky, using agency feed or alternatives
-                ('NPR News', 'https://feeds.npr.org/1001/rss.xml', 'world', 'rss'),
-                ('Associated Press', 'https://apnews.com/hub/ap-top-news.rss', 'world', 'rss'), # Often unofficial
-                ('CNN (Top Stories)', 'http://rss.cnn.com/rss/edition.rss', 'world', 'rss'),
-
+                
                 # SCIENCE
                 ('Science Daily', 'https://www.sciencedaily.com/rss/all.xml', 'science', 'rss'),
                 ('Scientific American', 'http://rss.sciam.com/ScientificAmerican-Global', 'science', 'rss'),
-                ('Nature', 'http://www.nature.com/nature/current_issue/rss', 'science', 'rss'),
-                ('New Scientist', 'https://www.newscientist.com/feed/home/', 'science', 'rss'),
-                ('NASA Breaking News', 'https://www.nasa.gov/rss/dyn/breaking_news.rss', 'science', 'rss'),
-                ('National Geographic', 'https://www.nationalgeographic.com/ngm/index.xml', 'science', 'rss'), # Often unstable, but worth a try
+                ('NASA', 'https://www.nasa.gov/rss/dyn/breaking_news.rss', 'science', 'rss'),
 
                 # BUSINESS
                 ('Forbes', 'https://www.forbes.com/most-popular/feed/', 'business', 'rss'),
                 ('Fortune', 'https://fortune.com/feed', 'business', 'rss'),
                 ('Bloomberg', 'https://feeds.bloomberg.com/markets/news.rss', 'business', 'rss'),
-                ('Business Insider', 'https://feeds.businessinsider.com/custom/type/top-stories', 'business', 'rss'),
-                ('Economist', 'https://www.economist.com/sections/business-finance/rss.xml', 'business', 'rss'),
-                ('Harvard Business Review', 'https://feeds.hbr.org/harvardbusiness', 'business', 'rss'),
 
                 # GAMING
                 ('Polygon', 'https://www.polygon.com/rss/index.xml', 'gaming', 'rss'),
                 ('Kotaku', 'https://kotaku.com/rss', 'gaming', 'rss'),
-                ('GameSpot', 'https://www.gamespot.com/feeds/news/', 'gaming', 'rss'),
-                ('IGN', 'http://feeds.ign.com/ign/news', 'gaming', 'rss'),
                 ('Eurogamer', 'https://www.eurogamer.net/?format=rss', 'gaming', 'rss'),
-                ('PC Gamer', 'https://www.pcgamer.com/rss', 'gaming', 'rss'),
 
-                # ENTERTAINMENT (Movies/TV)
+                # OTHERS
                 ('Variety', 'https://variety.com/feed/', 'entertainment', 'rss'),
-                ('The Hollywood Reporter', 'https://deadline.com/feed/', 'entertainment', 'rss'),
-                ('Screen Rant', 'https://screenrant.com/feed/', 'entertainment', 'rss'),
-                ('IndieWire', 'https://www.indiewire.com/feed/', 'entertainment', 'rss'),
-
-                # MUSIC
                 ('Pitchfork', 'https://pitchfork.com/feed/feed-news/rss', 'music', 'rss'),
-                ('Rolling Stone', 'https://www.rollingstone.com/music/music-news/feed/', 'music', 'rss'),
-                ('Billboard', 'https://www.billboard.com/feed/', 'music', 'rss'),
-                ('NME', 'https://www.nme.com/feed', 'music', 'rss'),
-
-                # SPORTS
                 ('ESPN', 'https://www.espn.com/espn/rss/news', 'sports', 'rss'),
-                ('Yahoo Sports', 'https://sports.yahoo.com/rss/', 'sports', 'rss'),
-                ('Bleacher Report', 'https://bleacherreport.com/articles/feed', 'sports', 'rss'),
-                ('CBS Sports', 'https://sports.cbsimg.net/rss/headlines.xml', 'sports', 'rss'),
-
-                # FOOD
-                ('Serious Eats', 'https://feeds.feedburner.com/seriouseatsfeaturesvideos', 'food', 'rss'),
                 ('Eater', 'https://www.eater.com/rss/index.xml', 'food', 'rss'),
-                ('Bon Appétit', 'https://www.bonappetit.com/feed/latest', 'food', 'rss'),
-                ('Food & Wine', 'https://www.foodandwine.com/feed', 'food', 'rss'),
-
-                # TRAVEL
                 ('Lonely Planet', 'https://www.lonelyplanet.com/news/rss.xml', 'travel', 'rss'),
-                ('Nomadic Matt', 'https://www.nomadicmatt.com/feed/', 'travel', 'rss'),
-                ('Travel + Leisure', 'https://www.travelandleisure.com/feed', 'travel', 'rss'),
-                ('Skift', 'https://skift.com/feed/', 'travel', 'rss'),
-
-                # HEALTH
-                ('Healthline', 'https://www.healthline.com/rss', 'health', 'rss'),
-                ('Medical News Today', 'https://www.medicalnewstoday.com/feed', 'health', 'rss'),
-                ('Psychology Today', 'https://www.psychologytoday.com/us/feed/news', 'health', 'rss')
+                ('Healthline', 'https://www.healthline.com/rss', 'health', 'rss')
             ]
             conn.executemany('INSERT INTO feeds (name, url, category, type) VALUES (?, ?, ?, ?)', seeds)
             conn.commit()
@@ -156,6 +123,35 @@ def get_domain(url):
     except:
         return 'Self'
 
+def find_rss_link(html, base_url):
+    try:
+        soup = BeautifulSoup(html, 'html.parser')
+        # 1. Look for standard link tags
+        link = soup.find('link', type='application/rss+xml')
+        if link: return urljoin(base_url, link.get('href'))
+        
+        link = soup.find('link', type='application/atom+xml')
+        if link: return urljoin(base_url, link.get('href'))
+        
+        return None
+    except:
+        return None
+
+def score_category(text):
+    text = text.lower()
+    scores = {cat: 0 for cat in CATEGORY_KEYWORDS}
+    
+    for cat, keywords in CATEGORY_KEYWORDS.items():
+        for k in keywords:
+            if k in text:
+                scores[cat] += 1
+    
+    # Get winner
+    best_cat = max(scores, key=scores.get)
+    if scores[best_cat] > 0:
+        return best_cat, scores[best_cat]
+    return 'other', 0
+
 # --- FETCHERS ---
 def fetch_hn():
     try:
@@ -166,10 +162,10 @@ def fetch_hn():
             item_r = requests.get(f'{HN_API}/item/{id}.json', timeout=2)
             if item_r.status_code == 200:
                 item = item_r.json()
-                if item:
+                if item and 'url' in item:
                     stories.append({
                         'title': item.get('title'),
-                        'url': item.get('url', f'https://news.ycombinator.com/item?id={id}'),
+                        'url': item.get('url'),
                         'score': item.get('score', 0),
                         'author': item.get('by', 'unknown'),
                         'time': item.get('time', time.time()),
@@ -187,13 +183,14 @@ def fetch_rss(url, source_name):
     try:
         d = feedparser.parse(url, agent=USER_AGENT)
         items = []
+        full_text_for_scoring = ""
+        
         for entry in d.entries[:15]:
             link = entry.link
             title = entry.title
+            if not title or not link: continue
             
-            # Basic validation
-            if not title or not link:
-                continue
+            full_text_for_scoring += f"{title} "
 
             items.append({
                 'title': title,
@@ -206,14 +203,84 @@ def fetch_rss(url, source_name):
                 'id': entry.id if hasattr(entry, 'id') else link,
                 'source_name': source_name
             })
-        return items
+            
+        return items, full_text_for_scoring
     except Exception as e:
         print(f"RSS Error ({url}): {e}")
-        return []
+        return [], ""
+
+# --- DISCOVERY ENGINE ---
+def discover_feeds(articles):
+    # Take 3 random articles from domains we DON'T have
+    candidates = []
+    
+    with get_db() as conn:
+        known_urls = [row['url'] for row in conn.execute("SELECT url FROM feeds").fetchall()]
+        # Simple domain extraction from known RSS urls is hard, so we just check DB logic later
+    
+    # We want to find NEW domains. 
+    # This is a basic implementation: check 2 random articles per cycle
+    import random
+    if len(articles) > 2:
+        targets = random.sample(articles, 2)
+    else:
+        targets = articles
+
+    for t in targets:
+        domain = t['domain']
+        if domain == 'Self' or 'github' in domain or 'youtube' in domain: continue
+        
+        try:
+            # Check if we already have this domain in our DB (fuzzy match)
+            # This prevents re-scanning TechCrunch if we already have TechCrunch RSS
+            # For V1, we just scan.
+            
+            print(f"🕵️ DISCOVERY: Scanning {t['url']} for feeds...")
+            r = requests.get(t['url'], timeout=5, headers={'User-Agent': USER_AGENT})
+            if r.status_code != 200: continue
+            
+            feed_url = find_rss_link(r.text, t['url'])
+            
+            if feed_url:
+                print(f"✅ FOUND FEED: {feed_url}")
+                
+                # Check if exists
+                with get_db() as conn:
+                    exists = conn.execute("SELECT 1 FROM feeds WHERE url=?", (feed_url,)).fetchone()
+                    if not exists:
+                        # Insert as 'other'
+                        conn.execute("INSERT INTO feeds (name, url, category, type) VALUES (?, ?, ?, ?)",
+                                     (domain, feed_url, 'other', 'rss'))
+                        conn.commit()
+                        print("Saved to DB as 'other'")
+        except Exception as e:
+            print(f"Discovery failed for {t['url']}: {e}")
+
+def classify_pending_feeds():
+    with get_db() as conn:
+        # Find feeds in 'other'
+        pending = conn.execute("SELECT * FROM feeds WHERE category='other'").fetchall()
+        
+        for feed in pending:
+            print(f"🧠 CLASSIFYING: {feed['name']}...")
+            items, full_text = fetch_rss(feed['url'], feed['name'])
+            
+            if not full_text: continue
+            
+            cat, score = score_category(full_text)
+            
+            if score > 2: # Threshold
+                print(f"🎉 PROMOTED {feed['name']} to {cat} (Score: {score})")
+                conn.execute("UPDATE feeds SET category=? WHERE id=?", (cat, feed['id']))
+                conn.commit()
+            else:
+                print(f"⚠️ Could not classify {feed['name']} (Best: {cat} with score {score})")
 
 # --- BACKGROUND WORKER ---
 def update_cache():
     print(f"[{datetime.now()}] Starting cache update...")
+    all_articles_for_discovery = []
+    
     with get_db() as conn:
         cats = conn.execute("SELECT DISTINCT category FROM feeds WHERE enabled=1").fetchall()
         
@@ -224,29 +291,37 @@ def update_cache():
             aggregated_news = []
             
             for feed in feeds:
-                print(f"Fetching {feed['name']} ({cat})...")
+                # fetch_rss now returns tuple (items, text)
                 if feed['type'] == 'hn':
-                    aggregated_news.extend(fetch_hn())
+                    items = fetch_hn()
                 else:
-                    aggregated_news.extend(fetch_rss(feed['url'], feed['name']))
+                    items, _ = fetch_rss(feed['url'], feed['name'])
+                
+                aggregated_news.extend(items)
             
             # Sort by time desc
             aggregated_news.sort(key=lambda x: x['time'], reverse=True)
             
+            # Keep for discovery
+            if cat == 'tech': # Mostly discover from Tech
+                all_articles_for_discovery.extend(aggregated_news)
+            
             # Store in Redis
             try:
                 cache.set(f"news:{cat}", json.dumps(aggregated_news))
-                print(f"Cached {len(aggregated_news)} items for {cat}")
             except Exception as e:
                 print(f"Redis Error: {e}")
 
+    # Run AI Engines
+    discover_feeds(all_articles_for_discovery)
+    classify_pending_feeds()
+
 def worker_thread():
-    # Initial run
     time.sleep(5) 
     init_db()
     update_cache()
     
-    schedule.every(10).minutes.do(update_cache)
+    schedule.every(15).minutes.do(update_cache)
     
     while True:
         schedule.run_pending()

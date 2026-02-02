@@ -4,3 +4,4 @@ feedparser
 redis
 gunicorn
 schedule
+beautifulsoup4

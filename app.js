@@ -1,38 +1,16 @@
-const HN_API = 'https://hacker-news.firebaseio.com/v0';
-const REDDIT_API = 'https://www.reddit.com';
-
-const CATEGORIES = {
-    tech: { name: 'Tech', type: 'hn', state: { ids: [], index: 0 } },
-    ai: { name: 'AI', type: 'reddit', endpoint: 'r/ArtificialIntelligence', state: { after: null } },
-    design: { name: 'Design', type: 'reddit', endpoint: 'r/Design', state: { after: null } },
-    world: { name: 'World', type: 'reddit', endpoint: 'r/worldnews', state: { after: null } },
-    science: { name: 'Science', type: 'reddit', endpoint: 'r/science', state: { after: null } },
-    space: { name: 'Space', type: 'reddit', endpoint: 'r/space', state: { after: null } },
-    business: { name: 'Business', type: 'reddit', endpoint: 'r/economics', state: { after: null } },
-    gaming: { name: 'Gaming', type: 'reddit', endpoint: 'r/Games', state: { after: null } }
-};
-
 let currentCategory = 'tech';
 let isLoading = false;
-let hasMore = true;
 
 // Initial Load
 document.addEventListener('DOMContentLoaded', () => {
     loadCategory('tech');
-    window.addEventListener('scroll', handleScroll);
 });
 
 async function loadCategory(catKey) {
     if (isLoading && currentCategory === catKey) return;
     
     currentCategory = catKey;
-    isLoading = false;
-    hasMore = true;
-
-    // Reset State
-    Object.keys(CATEGORIES).forEach(k => {
-        CATEGORIES[k].state = { ids: [], index: 0, after: null };
-    });
+    isLoading = true;
 
     // Update UI Nav
     document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -40,134 +18,34 @@ async function loadCategory(catKey) {
     });
     document.getElementById(`btn-${catKey}`).classList.add('active-nav');
 
-    // Clear Feed
+    // Show Loader
     const feed = document.getElementById('news-feed');
     feed.innerHTML = '';
     
-    // Show Top Loader
     document.getElementById('loading').style.display = 'block';
-    
-    // Initial fetch
-    await loadMore();
-    
-    // Hide Top Loader
-    document.getElementById('loading').style.display = 'none';
-}
-
-async function loadMore() {
-    if (isLoading || !hasMore) return;
-    isLoading = true;
-
-    const loader = document.getElementById('infinite-loader');
-    loader.classList.remove('hidden');
 
     try {
-        const config = CATEGORIES[currentCategory];
-        let stories = [];
+        const response = await fetch(`/api/news?category=${catKey}`);
+        const stories = await response.json();
 
-        if (config.type === 'hn') {
-            stories = await fetchHN(config);
-        } else if (config.type === 'reddit') {
-            stories = await fetchReddit(config);
-        }
+        document.getElementById('loading').style.display = 'none';
 
-        if (stories.length === 0) {
-            hasMore = false;
-            loader.classList.add('hidden');
+        if (!stories || stories.length === 0) {
+            feed.innerHTML = '<div class="text-center text-slate-500 py-10">No stories found.</div>';
             return;
         }
 
-        const feed = document.getElementById('news-feed');
-        // Calculate offset for animation delay based on existing items
-        const currentCount = feed.children.length;
-
         stories.forEach((story, index) => {
-            const card = createCard(story, index + currentCount); // Pass total index for color cycling
+            const card = createCard(story, index);
             feed.appendChild(card);
         });
 
     } catch (e) {
         console.error(e);
+        document.getElementById('loading').innerHTML = '<p class="text-red-400">Connection Error.</p>';
     } finally {
         isLoading = false;
-        loader.classList.add('hidden');
     }
-}
-
-async function fetchHN(config) {
-    // If we haven't fetched the IDs yet, get them
-    if (config.state.ids.length === 0) {
-        const response = await fetch(`${HN_API}/topstories.json`);
-        config.state.ids = await response.json();
-    }
-
-    const start = config.state.index;
-    const end = start + 12;
-    const batchIds = config.state.ids.slice(start, end);
-
-    if (batchIds.length === 0) return [];
-
-    config.state.index = end; // Advance cursor
-
-    const promises = batchIds.map(id => fetch(`${HN_API}/item/${id}.json`).then(r => r.json()));
-    const raw = await Promise.all(promises);
-    
-    return raw.filter(item => item).map(item => ({
-        title: item.title,
-        url: item.url || `https://news.ycombinator.com/item?id=${item.id}`,
-        score: item.score,
-        author: item.by,
-        time: item.time,
-        domain: getDomain(item.url),
-        commentsUrl: `https://news.ycombinator.com/item?id=${item.id}`,
-        id: item.id
-    }));
-}
-
-async function fetchReddit(config) {
-    let url = `${REDDIT_API}/${config.endpoint}/hot.json?limit=15`;
-    if (config.state.after) {
-        url += `&after=${config.state.after}`;
-    }
-
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    // Update 'after' token for next page
-    config.state.after = data.data.after;
-    if (!config.state.after) hasMore = false;
-
-    return data.data.children
-        .filter(child => !child.data.stickied) 
-        .map(child => {
-            const item = child.data;
-            return {
-                title: item.title,
-                url: item.url,
-                score: item.score,
-                author: item.author,
-                time: item.created_utc,
-                domain: item.domain,
-                commentsUrl: `https://www.reddit.com${item.permalink}`,
-                id: item.id
-            };
-        });
-}
-
-function handleScroll() {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    
-    // Load more when user is 300px from the bottom
-    if (scrollTop + clientHeight >= scrollHeight - 300) {
-        loadMore();
-    }
-}
-
-function getDomain(url) {
-    if (!url) return 'Self';
-    try {
-        return new URL(url).hostname.replace('www.', '');
-    } catch(e) { return 'Self'; }
 }
 
 function createCard(story, index) {

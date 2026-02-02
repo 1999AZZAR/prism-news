@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    container_name: prism-app
+    restart: always
+    ports:
+      - "5051:5051"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    networks:
+      - prism-net
+
+  redis:
+    image: redis:alpine
+    container_name: prism-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - prism-net
+
+networks:
+  prism-net:
+    driver: bridge
+
+volumes:
+  redis_data:

@@ -302,6 +302,9 @@ def update_cache():
             # Sort by time desc
             aggregated_news.sort(key=lambda x: x['time'], reverse=True)
             
+            # Cap at 150 items to stay relevant
+            aggregated_news = aggregated_news[:150]
+            
             # Keep for discovery
             if cat == 'tech': # Mostly discover from Tech
                 all_articles_for_discovery.extend(aggregated_news)

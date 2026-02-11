@@ -27,6 +27,7 @@ async function loadCategory(catKey, force = false) {
     const catLabel = document.getElementById('category-label');
     const titleMap = {
         'tech': 'Technological Frontier',
+        'edan': 'Madness Unleashed',
         'ai': 'Neural Synthetics',
         'design': 'Visual Engineering',
         'science': 'Quantum Horizons',
@@ -50,7 +51,7 @@ async function loadCategory(catKey, force = false) {
     loader.classList.remove('hidden');
 
     try {
-        const response = await fetch(`/api/news?category=${catKey}`);
+        const response = await fetch(`/api/news?category=${catKey}&t=${Date.now()}`);
         const stories = await response.json();
 
         // Clear feed
@@ -83,20 +84,24 @@ async function loadCategory(catKey, force = false) {
 
 function createCard(story, index) {
     const div = document.createElement('div');
-    div.className = 'neo-card p-0 flex flex-col justify-between overflow-hidden group';
+    div.className = 'neo-card flex flex-col justify-between overflow-hidden group';
+    div.style.backgroundColor = '#ffffff';
+    div.style.border = '4px solid #000000';
+    div.style.boxShadow = '8px 8px 0px 0px #000000';
+    div.style.marginBottom = '20px';
     
     const time = new Date(story.time * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const date = new Date(story.time * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' });
     
     // Clash colors based on index
-    const accentColors = ['bg-neo-pink', 'bg-neo-blue', 'bg-neo-green', 'bg-neo-orange', 'bg-neo-purple'];
+    const accentColors = ['#ff00ff', '#3b82f6', '#22c55e', '#f97316', '#a855f7'];
     const accent = accentColors[index % accentColors.length];
 
     div.innerHTML = `
-        <div class="p-8 bg-white">
+        <div class="p-8">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-4">
-                    <span class="inline-flex items-center justify-center w-12 h-12 neo-border ${accent} text-black text-xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <span class="inline-flex items-center justify-center w-12 h-12 neo-border text-black text-xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" style="background-color: ${accent}">
                         ${index + 1}
                     </span>
                     <div>
@@ -115,9 +120,9 @@ function createCard(story, index) {
                 </a>
             </h3>
             
-            <div class="inline-block bg-neo-white neo-border px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div class="inline-block bg-slate-100 neo-border px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <p class="text-[10px] font-black uppercase text-black">
-                    DOMAIN: <span class="text-neo-blue">${story.domain}</span>
+                    DOMAIN: <span class="text-blue-600">${story.domain}</span>
                 </p>
             </div>
         </div>
@@ -125,16 +130,16 @@ function createCard(story, index) {
         <div class="bg-black text-white p-6 border-t-4 border-black flex items-center justify-between">
             <div class="flex gap-6">
                 <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase text-neo-yellow opacity-80">Author</span>
+                    <span class="text-[8px] font-black uppercase text-yellow-300 opacity-80">Author</span>
                     <span class="text-xs font-black tracking-tight truncate max-w-[100px]">${story.author}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase text-neo-yellow opacity-80">Score</span>
+                    <span class="text-[8px] font-black uppercase text-yellow-300 opacity-80">Score</span>
                     <span class="text-xs font-black">${formatScore(story.score)}</span>
                 </div>
             </div>
             
-            <a href="${story.commentsUrl}" target="_blank" class="w-12 h-12 bg-white neo-border flex items-center justify-center text-black hover:bg-neo-yellow transition-colors shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] active:shadow-none">
+            <a href="${story.commentsUrl}" target="_blank" class="w-12 h-12 bg-white neo-border flex items-center justify-center text-black hover:bg-yellow-300 transition-colors shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] active:shadow-none">
                 <i class="fa-solid fa-comment-dots text-xl"></i>
             </a>
         </div>

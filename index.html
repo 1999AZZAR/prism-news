@@ -37,30 +37,30 @@
     </script>
     <style>
         body {
-            background-color: #feff00; /* Neo Yellow Base */
-            color: #000;
+            background-color: #feff00 !important; /* Force Neo Yellow */
+            color: #000 !important;
         }
 
         .neo-border {
-            border: 4px solid #000;
+            border: 4px solid #000 !important;
         }
 
         .neo-card {
-            background: #fff;
-            border: 4px solid #000;
-            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+            background: #fff !important;
+            border: 4px solid #000 !important;
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important;
             transition: all 0.2s ease;
         }
 
         .neo-card:hover {
             transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
+            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1) !important;
         }
 
         .neo-btn {
-            background: #fff;
-            border: 3px solid #000;
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+            background: #fff !important;
+            border: 3px solid #000 !important;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
             transition: all 0.1s ease;
             font-weight: 800;
             text-transform: uppercase;
@@ -68,18 +68,13 @@
 
         .neo-btn:hover {
             transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
-        }
-
-        .neo-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1) !important;
         }
 
         .neo-btn.active {
-            background: #000;
-            color: #feff00;
-            box-shadow: none;
+            background: #000 !important;
+            color: #feff00 !important;
+            box-shadow: none !important;
             transform: translate(2px, 2px);
         }
 
@@ -101,8 +96,8 @@
 <body class="antialiased selection:bg-neo-pink selection:text-white">
 
     <!-- Header Marquee -->
-    <div class="fixed top-0 w-full z-[60] pointer-events-none">
-        <marquee scrollamount="12" class="pointer-events-auto">
+    <div class="fixed top-0 w-full z-[100]">
+        <marquee scrollamount="12">
             SYSTEM STATUS: OPERATIONAL // CATEGORY: <span id="marquee-cat">TECH</span> // SOURCE: AGGREGATED // ARCHITECTURE: NEO-BRUTALISM // 
         </marquee>
     </div>
@@ -112,7 +107,7 @@
         <div class="max-w-full mx-auto flex flex-col md:flex-row items-center gap-4">
             <!-- Logo -->
             <div onclick="window.location.reload()" class="neo-border bg-white px-8 py-3 flex items-center gap-4 cursor-pointer shadow-neo hover:shadow-neo-lg transition-all active:shadow-none">
-                <h1 class="text-3xl font-black font-mega tracking-tighter">PRISM</h1>
+                <h1 class="text-3xl font-black font-mega tracking-tighter text-black">PRISM</h1>
                 <div class="w-6 h-6 bg-neo-pink neo-border rotate-45"></div>
             </div>
 
@@ -130,7 +125,7 @@
             
             <!-- Tools -->
             <div class="flex gap-2">
-                <button onclick="refreshCurrent()" class="neo-btn p-3 bg-neo-white">
+                <button onclick="refreshCurrent()" class="neo-btn p-3 bg-neo-white text-black">
                     <i class="fa-solid fa-rotate-right text-xl"></i>
                 </button>
             </div>
@@ -138,7 +133,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-[1800px] mx-auto px-6 pt-64 pb-32">
+    <main class="relative z-10 max-w-[1800px] mx-auto px-6 pt-64 pb-32">
         
         <!-- Welcome Hero -->
         <section class="mb-20">
@@ -157,12 +152,12 @@
             <!-- Loading State -->
             <div id="loading" class="flex flex-col items-center justify-center py-40">
                 <div class="bg-white neo-border p-10 shadow-neo-lg animate-bounce">
-                    <h3 class="font-mega font-black text-3xl uppercase italic">Decrypting...</h3>
+                    <h3 class="font-mega font-black text-3xl uppercase italic text-black">Decrypting...</h3>
                 </div>
             </div>
 
             <!-- Feed Grid -->
-            <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 opacity-0 transition-opacity duration-300">
+            <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
                 <!-- Cards injected here -->
             </div>
         </section>
@@ -170,8 +165,8 @@
     </main>
 
     <!-- Sidebar Info (Desktop Only) -->
-    <aside class="fixed right-10 bottom-10 z-40 hidden 2xl:block">
-        <div class="bg-neo-pink neo-border p-6 shadow-neo-lg max-w-xs rotate-2">
+    <aside class="fixed right-10 bottom-24 z-40 hidden 2xl:block">
+        <div class="bg-neo-pink neo-border p-6 shadow-neo-lg max-w-xs rotate-2 text-black">
             <h4 class="font-mega font-black text-xl mb-2 uppercase">MEMA LOG</h4>
             <p class="font-bold text-sm leading-tight">
                 Brutalism mode engaged. High contrast, zero noise. Data is the only objective.
@@ -183,7 +178,7 @@
         </div>
     </aside>
 
-    <!-- Floating Footer -->
+    <!-- Footer -->
     <footer class="fixed bottom-0 left-0 w-full z-50 p-6 bg-black border-t-4 border-white text-white">
         <div class="max-w-full mx-auto flex items-center justify-between">
             <div class="flex items-center gap-6">
@@ -204,8 +199,11 @@
     <script src="app.js"></script>
     <script>
         function refreshCurrent() {
-            const current = document.querySelector('.neo-btn.active').id.replace('btn-', '');
-            loadCategory(current, true);
+            const activeBtn = document.querySelector('.neo-btn.active');
+            if (activeBtn) {
+                const current = activeBtn.id.replace('btn-', '');
+                loadCategory(current, true);
+            }
         }
     </script>
 </body>

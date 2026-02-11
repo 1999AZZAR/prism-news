@@ -46,7 +46,7 @@ async function loadCategory(catKey, force = false) {
     const feed = document.getElementById('news-feed');
     const loader = document.getElementById('loading');
     
-    feed.classList.add('opacity-0');
+    feed.style.visibility = 'hidden';
     loader.classList.remove('hidden');
 
     try {
@@ -60,8 +60,8 @@ async function loadCategory(catKey, force = false) {
         loader.classList.add('hidden');
 
         if (!stories || stories.length === 0) {
-            feed.innerHTML = '<div class="col-span-full bg-white neo-border p-20 text-center font-mega font-black text-4xl uppercase">Zero Signals Received.</div>';
-            feed.classList.remove('opacity-0');
+            feed.innerHTML = '<div class="col-span-full bg-white neo-border p-20 text-center font-mega font-black text-4xl uppercase text-black">Zero Signals Received.</div>';
+            feed.style.visibility = 'visible';
             return;
         }
 
@@ -70,8 +70,8 @@ async function loadCategory(catKey, force = false) {
             feed.appendChild(card);
         });
 
-        // Trigger fade in
-        feed.classList.remove('opacity-0');
+        // Ensure visible
+        feed.style.visibility = 'visible';
 
     } catch (e) {
         console.error(e);
@@ -93,15 +93,15 @@ function createCard(story, index) {
     const accent = accentColors[index % accentColors.length];
 
     div.innerHTML = `
-        <div class="p-8">
+        <div class="p-8 bg-white">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center justify-center w-12 h-12 neo-border ${accent} text-black text-xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                         ${index + 1}
                     </span>
                     <div>
-                        <p class="text-xs font-black uppercase tracking-tighter">${story.source_name || 'Hacker News'}</p>
-                        <p class="text-[10px] font-bold opacity-50 uppercase">${date}</p>
+                        <p class="text-xs font-black uppercase tracking-tighter text-black">${story.source_name || 'Hacker News'}</p>
+                        <p class="text-[10px] font-bold opacity-50 uppercase text-black">${date}</p>
                     </div>
                 </div>
                 <div class="font-mono text-xs font-black bg-black text-white px-3 py-1 neo-border">
@@ -109,14 +109,14 @@ function createCard(story, index) {
                 </div>
             </div>
             
-            <h3 class="text-2xl font-black leading-tight mb-6 group-hover:underline decoration-4 underline-offset-4">
+            <h3 class="text-2xl font-black leading-tight mb-6 group-hover:underline decoration-4 underline-offset-4 text-black">
                 <a href="${story.url}" target="_blank" class="focus:outline-none">
                     ${story.title}
                 </a>
             </h3>
             
             <div class="inline-block bg-neo-white neo-border px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <p class="text-[10px] font-black uppercase">
+                <p class="text-[10px] font-black uppercase text-black">
                     DOMAIN: <span class="text-neo-blue">${story.domain}</span>
                 </p>
             </div>

@@ -1,10 +1,16 @@
 let currentCategory = 'tech';
 let isLoading = false;
 
-// Initial Load
-document.addEventListener('DOMContentLoaded', () => {
-    loadCategory('tech');
-});
+// Initial Load Fix: Check readyState to avoid race conditions with dynamic injection
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+
+function init() {
+    loadCategory('tech', true); // Force load for the first time
+}
 
 async function loadCategory(catKey, force = false) {
     if (!force && isLoading && currentCategory === catKey) return;
@@ -12,13 +18,20 @@ async function loadCategory(catKey, force = false) {
     currentCategory = catKey;
     isLoading = true;
 
-    // Update Nav Buttons
+    // Update Nav Buttons (Desktop)
     document.querySelectorAll('.neo-m3-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
     const targetBtn = document.getElementById(`btn-${catKey}`);
     if (targetBtn) targetBtn.classList.add('active');
+
+    // Update Nav Pills (Mobile)
+    document.querySelectorAll('.nav-pill').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    const mobileBtn = document.getElementById(`m-btn-${catKey}`);
+    if (mobileBtn) mobileBtn.classList.add('active');
 
     // Update Hero Title & Label
     const catLabel = document.getElementById('category-label');
@@ -60,7 +73,7 @@ async function loadCategory(catKey, force = false) {
 
         if (!stories || stories.length === 0) {
             feed.innerHTML = `
-                <div class="col-span-full neo-m3-card p-24 text-center bg-white">
+                <div class="col-span-full neo-m3-card p-24 text-center bg-white" style="background-color: #ffffff; border: 3px solid #000; border-radius: 24px;">
                     <h3 class="font-black text-6xl uppercase tracking-tighter mb-4 text-black">SILENCE</h3>
                     <p class="font-mono text-xs font-black uppercase tracking-widest text-slate-400">Zero data received from current uplink: ${catKey}</p>
                 </div>
@@ -88,6 +101,12 @@ async function loadCategory(catKey, force = false) {
 function createCard(story, index) {
     const div = document.createElement('div');
     div.className = 'neo-m3-card flex flex-col justify-between overflow-hidden group';
+    div.style.backgroundColor = '#ffffff';
+    div.style.border = '4px solid #000000';
+    div.style.boxShadow = '8px 8px 0px 0px #000000';
+    div.style.borderRadius = '24px';
+    div.style.position = 'relative';
+    div.style.zIndex = '10';
     
     const time = new Date(story.time * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const date = new Date(story.time * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' });
@@ -97,7 +116,7 @@ function createCard(story, index) {
     const accent = accents[index % accents.length];
 
     div.innerHTML = `
-        <div class="p-8 bg-white">
+        <div class="p-8">
             <div class="flex justify-between items-center mb-8">
                 <div class="flex items-center gap-4">
                     <span class="flex items-center justify-center w-12 h-12 border-4 border-black text-black text-xl font-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" style="background-color: ${accent}">

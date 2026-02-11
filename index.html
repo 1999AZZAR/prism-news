@@ -37,6 +37,7 @@
             background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px) !important;
             background-size: 24px 24px !important;
             color: #020617 !important;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         .neo-m3-card {
@@ -78,6 +79,32 @@
             transform: translate(2px, 2px);
         }
 
+        .nav-pill {
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            color: #000;
+            border: 2.5px solid #000;
+            background: #fff;
+            white-space: nowrap;
+            box-shadow: 3px 3px 0px 0px #000;
+        }
+        
+        .nav-pill:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px #000;
+        }
+
+        .nav-pill.active {
+            background: #000;
+            color: #fff;
+            box-shadow: none;
+            transform: translate(1px, 1px);
+        }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -99,17 +126,29 @@
             letter-spacing: -0.04em;
         }
 
-        #news-feed {
-            display: grid;
-            opacity: 1 !important;
-            visibility: visible !important;
+        marquee {
+            font-family: "Lexend Mega", sans-serif;
+            font-weight: 900;
+            border-top: 4px solid #000;
+            border-bottom: 4px solid #000;
+            background: #000;
+            color: #fff;
+            padding: 10px 0;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Header -->
-    <header class="fixed top-0 w-full z-[100] p-4 md:p-6 bg-white/90 backdrop-blur-xl border-b-4 border-black">
+    <!-- Header Marquee -->
+    <div class="fixed top-0 w-full z-[110]">
+        <marquee scrollamount="12">
+            SYSTEM STATUS: OPERATIONAL // CATEGORY: <span id="marquee-cat">TECH</span> // SOURCE: AGGREGATED // ARCHITECTURE: HYBRID_V2.1 // 
+        </marquee>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="fixed top-12 w-full z-[100] p-4 md:p-6 bg-white/90 backdrop-blur-xl border-b-4 border-black">
         <div class="max-w-full mx-auto flex flex-col xl:flex-row items-center gap-6">
             <!-- Logo -->
             <div onclick="window.location.reload()" class="flex items-center gap-4 cursor-pointer group">
@@ -119,7 +158,7 @@
                 <h1 class="text-3xl font-black wired-title tracking-tighter text-black">PRISM<span class="text-hybrid-primary">.</span></h1>
             </div>
 
-            <!-- Categories -->
+            <!-- Categories (Desktop) -->
             <nav class="flex gap-3 overflow-x-auto no-scrollbar py-2 flex-1 w-full xl:w-auto">
                 <button onclick="loadCategory('tech')" id="btn-tech" class="neo-m3-btn px-6 py-2.5 active">Tech</button>
                 <button onclick="loadCategory('edan')" id="btn-edan" class="neo-m3-btn px-6 py-2.5 border-dashed bg-hybrid-pastel-pink text-black">Edan</button>
@@ -138,10 +177,31 @@
                 <button onclick="loadCategory('other')" id="btn-other" class="neo-m3-btn px-6 py-2.5 opacity-50">Other</button>
             </nav>
         </div>
+        
+        <!-- Mobile/Tablet Sub-Nav (Syncing categories) -->
+        <div class="mt-4 xl:hidden max-w-full overflow-x-auto no-scrollbar pointer-events-auto border-t-2 border-black pt-4">
+            <div class="flex gap-2 px-2 pb-2">
+                <button onclick="loadCategory('tech')" id="m-btn-tech" class="nav-pill active">Tech</button>
+                <button onclick="loadCategory('edan')" id="m-btn-edan" class="nav-pill bg-hybrid-pastel-pink">Edan</button>
+                <button onclick="loadCategory('ai')" id="m-btn-ai" class="nav-pill">AI</button>
+                <button onclick="loadCategory('design')" id="m-btn-design" class="nav-pill">Design</button>
+                <button onclick="loadCategory('science')" id="m-btn-science" class="nav-pill">Science</button>
+                <button onclick="loadCategory('world')" id="m-btn-world" class="nav-pill">World</button>
+                <button onclick="loadCategory('business')" id="m-btn-business" class="nav-pill">Business</button>
+                <button onclick="loadCategory('gaming')" id="m-btn-gaming" class="nav-pill">Gaming</button>
+                <button onclick="loadCategory('entertainment')" id="m-btn-entertainment" class="nav-pill">Media</button>
+                <button onclick="loadCategory('music')" id="m-btn-music" class="nav-pill">Music</button>
+                <button onclick="loadCategory('sports')" id="m-btn-sports" class="nav-pill">Sports</button>
+                <button onclick="loadCategory('food')" id="m-btn-food" class="nav-pill">Food</button>
+                <button onclick="loadCategory('travel')" id="m-btn-travel" class="nav-pill">Travel</button>
+                <button onclick="loadCategory('health')" id="m-btn-health" class="nav-pill">Health</button>
+                <button onclick="loadCategory('other')" id="m-btn-other" class="nav-pill opacity-60">Other</button>
+            </div>
+        </div>
     </header>
 
     <!-- Main Content -->
-    <main class="relative z-10 max-w-[1700px] mx-auto px-6 pt-72 xl:pt-40 pb-40">
+    <main class="relative z-10 max-w-[1700px] mx-auto px-6 pt-96 xl:pt-48 pb-40">
         
         <!-- Welcome Hero -->
         <section class="mb-20 border-l-[12px] border-black pl-10">

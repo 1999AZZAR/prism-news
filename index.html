@@ -3,33 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRISM | THE GRID</title>
+    <title>PRISM | THE HYBRID</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'neo-yellow': '#feff00',
-                        'neo-purple': '#a855f7',
-                        'neo-pink': '#ff00ff',
-                        'neo-blue': '#3b82f6',
-                        'neo-green': '#22c55e',
-                        'neo-orange': '#f97316',
-                        'neo-white': '#f8fafc',
+                        'hybrid-bg': '#f4f4f5', // Slate 50
+                        'hybrid-primary': '#6366f1', // Indigo 500
+                        'hybrid-pastel-purple': '#e9d5ff',
+                        'hybrid-pastel-blue': '#dbeafe',
+                        'hybrid-pastel-green': '#dcfce7',
+                        'hybrid-pastel-pink': '#fce7f3',
+                        'hybrid-dark': '#0f172a',
                     },
                     fontFamily: {
-                        sans: ['"Space Grotesk"', 'sans-serif'],
-                        mega: ['"Lexend Mega"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        space: ['"Space Grotesk"', 'sans-serif'],
                     },
                     boxShadow: {
-                        'neo': '4px 4px 0px 0px rgba(0,0,0,1)',
-                        'neo-lg': '8px 8px 0px 0px rgba(0,0,0,1)',
-                        'neo-xl': '12px 12px 0px 0px rgba(0,0,0,1)',
+                        'neo': '6px 6px 0px 0px rgba(0,0,0,1)',
+                        'neo-sm': '4px 4px 0px 0px rgba(0,0,0,1)',
+                        'neo-lg': '10px 10px 0px 0px rgba(0,0,0,1)',
                     }
                 }
             }
@@ -37,105 +38,126 @@
     </script>
     <style>
         body {
-            background-color: #f0f0f0 !important;
-            background-image: radial-gradient(#000 1px, transparent 1px) !important;
-            background-size: 20px 20px !important;
-            color: #000 !important;
-            font-family: 'Space Grotesk', sans-serif;
+            background-color: #f4f4f5;
+            background-image: radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #0f172a;
         }
 
-        .neo-border {
-            border: 4px solid #000 !important;
+        .neo-m3-border {
+            border: 3px solid #000;
         }
 
-        .neo-btn {
-            background: #fff !important;
-            border: 3px solid #000 !important;
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
-            transition: all 0.1s ease;
-            font-weight: 800;
-            text-transform: uppercase;
+        .neo-m3-card {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 24px;
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1) !important;
+        .neo-m3-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 10px 10px 0px 0px rgba(0,0,0,1);
+            border-color: #6366f1;
         }
 
-        .neo-btn.active {
-            background: #000 !important;
-            color: #feff00 !important;
-            box-shadow: none !important;
+        .neo-m3-btn {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 9999px;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+            transition: all 0.2s ease;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .neo-m3-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+
+        .neo-m3-btn.active {
+            background: #000;
+            color: #fff;
+            box-shadow: none;
             transform: translate(2px, 2px);
         }
 
-        marquee {
-            font-family: "Lexend Mega", sans-serif;
-            font-weight: 900;
-            border-top: 4px solid #000;
-            border-bottom: 4px solid #000;
-            background: #000;
-            color: #fff;
-            padding: 10px 0;
-            text-transform: uppercase;
-        }
-        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .verge-accent {
+            background-color: #000;
+            color: #fff;
+            padding: 2px 8px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        
+        .wired-title {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
     </style>
 </head>
-<body class="antialiased selection:bg-neo-pink selection:text-white">
+<body class="antialiased selection:bg-hybrid-primary selection:text-white">
 
-    <!-- Header Marquee -->
-    <div class="fixed top-0 w-full z-[100]">
-        <marquee scrollamount="12">
-            SYSTEM STATUS: OPERATIONAL // CATEGORY: <span id="marquee-cat">TECH</span> // SOURCE: AGGREGATED // ARCHITECTURE: NEO-BRUTALISM // 
-        </marquee>
-    </div>
-
-    <!-- Main Navigation -->
-    <header class="fixed top-12 w-full z-50 p-4 md:p-6">
-        <div class="max-w-full mx-auto flex flex-col md:flex-row items-center gap-4">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 p-4 md:p-6 bg-white/80 backdrop-blur-md border-b-2 border-black">
+        <div class="max-w-full mx-auto flex flex-col lg:flex-row items-center gap-6">
             <!-- Logo -->
-            <div onclick="window.location.reload()" class="neo-border bg-white px-8 py-3 flex items-center gap-4 cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all active:shadow-none">
-                <h1 class="text-3xl font-black font-mega tracking-tighter text-black">PRISM</h1>
-                <div class="w-6 h-6 bg-neo-pink neo-border rotate-45"></div>
+            <div onclick="window.location.reload()" class="flex items-center gap-4 cursor-pointer group">
+                <div class="w-10 h-10 rounded-2xl bg-black flex items-center justify-center group-hover:bg-hybrid-primary transition-colors duration-300">
+                    <i class="fa-solid fa-bolt text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-black wired-title tracking-tighter">PRISM<span class="text-hybrid-primary">.</span></h1>
             </div>
 
             <!-- Categories -->
-            <nav class="flex gap-3 overflow-x-auto no-scrollbar p-2 bg-black neo-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 w-full md:w-auto">
-                <button onclick="loadCategory('tech')" id="btn-tech" class="neo-btn px-6 py-2 active">Tech</button>
-                <button onclick="loadCategory('edan')" id="btn-edan" class="neo-btn px-6 py-2 text-neo-pink">Edan</button>
-                <button onclick="loadCategory('ai')" id="btn-ai" class="neo-btn px-6 py-2">AI</button>
-                <button onclick="loadCategory('design')" id="btn-design" class="neo-btn px-6 py-2">Design</button>
-                <button onclick="loadCategory('science')" id="btn-science" class="neo-btn px-6 py-2">Science</button>
-                <button onclick="loadCategory('world')" id="btn-world" class="neo-btn px-6 py-2">World</button>
-                <button onclick="loadCategory('business')" id="btn-business" class="neo-btn px-6 py-2">Business</button>
-                <button onclick="loadCategory('gaming')" id="btn-gaming" class="neo-btn px-6 py-2">Gaming</button>
-                <button onclick="loadCategory('other')" id="btn-other" class="neo-btn px-6 py-2">Other</button>
+            <nav class="flex gap-2 overflow-x-auto no-scrollbar py-1 flex-1 w-full lg:w-auto">
+                <button onclick="loadCategory('tech')" id="btn-tech" class="neo-m3-btn px-5 py-2 active">Technology</button>
+                <button onclick="loadCategory('edan')" id="btn-edan" class="neo-m3-btn px-5 py-2 border-dashed">Edan</button>
+                <button onclick="loadCategory('ai')" id="btn-ai" class="neo-m3-btn px-5 py-2">Artificial Intel</button>
+                <button onclick="loadCategory('design')" id="btn-design" class="neo-m3-btn px-5 py-2">Design</button>
+                <button onclick="loadCategory('science')" id="btn-science" class="neo-m3-btn px-5 py-2">Science</button>
+                <button onclick="loadCategory('world')" id="btn-world" class="neo-m3-btn px-5 py-2">World</button>
+                <button onclick="loadCategory('business')" id="btn-business" class="neo-m3-btn px-5 py-2">Business</button>
+                <button onclick="loadCategory('gaming')" id="btn-gaming" class="neo-m3-btn px-5 py-2">Gaming</button>
+                <button onclick="loadCategory('other')" id="btn-other" class="neo-m3-btn px-5 py-2 opacity-50">Archive</button>
             </nav>
             
-            <!-- Tools -->
-            <div class="flex gap-2">
-                <button onclick="refreshCurrent()" class="neo-btn p-3 bg-neo-white text-black">
-                    <i class="fa-solid fa-rotate-right text-xl"></i>
+            <!-- Tools & Status -->
+            <div class="hidden lg:flex items-center gap-4">
+                <div class="flex items-center gap-2 font-mono text-[10px] font-bold uppercase">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    Grid_Uplink: OK
+                </div>
+                <button onclick="refreshCurrent()" class="neo-m3-btn p-2.5">
+                    <i class="fa-solid fa-rotate-right"></i>
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="relative z-10 max-w-[1800px] mx-auto px-6 pt-64 pb-32">
+    <main class="max-w-[1600px] mx-auto px-6 pt-48 lg:pt-32 pb-32">
         
         <!-- Welcome Hero -->
-        <section class="mb-20">
-            <div class="bg-black text-white neo-border p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] inline-block transform -rotate-1">
-                <h2 id="hero-title" class="text-6xl md:text-8xl font-black font-mega mb-4 uppercase tracking-tighter leading-none">
-                    SIGNAL DETECTED
+        <section class="mb-16 mt-8">
+            <div class="border-l-8 border-black pl-8">
+                <p class="font-mono text-xs font-bold text-hybrid-primary uppercase tracking-widest mb-2">Dispatch: Daily Synthesis</p>
+                <h2 id="hero-title" class="text-5xl md:text-8xl font-black wired-title uppercase tracking-tighter">
+                    THE SIGNAL
                 </h2>
-                <p class="text-neo-yellow text-xl md:text-2xl font-bold uppercase tracking-widest">
-                    Extraction: <span id="category-label">Technological Frontier</span>
-                </p>
+                <div class="mt-4 flex items-center gap-4">
+                    <span class="verge-accent" id="category-label">Technological Frontier</span>
+                    <span class="text-xs font-bold opacity-40 uppercase tracking-widest">Wong Edan Edition</span>
+                </div>
             </div>
         </section>
 
@@ -143,56 +165,62 @@
         <section class="relative">
             <!-- Loading State -->
             <div id="loading" class="flex flex-col items-center justify-center py-40">
-                <div class="bg-white neo-border p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate-bounce">
-                    <h3 class="font-mega font-black text-3xl uppercase italic text-black">Decrypting...</h3>
+                <div class="relative">
+                    <div class="w-20 h-20 border-4 border-black rounded-full"></div>
+                    <div class="w-20 h-20 border-t-4 border-hybrid-primary rounded-full animate-spin absolute inset-0"></div>
                 </div>
+                <p class="mt-6 font-mono font-black text-xs uppercase tracking-widest animate-pulse text-black">Synthesizing Grid Data...</p>
             </div>
 
             <!-- Feed Grid -->
-            <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 opacity-0 transition-opacity duration-500">
                 <!-- Cards injected here -->
             </div>
         </section>
 
     </main>
 
-    <!-- Sidebar Info (Desktop Only) -->
-    <aside class="fixed right-10 bottom-24 z-40 hidden 2xl:block">
-        <div class="bg-neo-pink neo-border p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-xs rotate-2 text-black">
-            <h4 class="font-mega font-black text-xl mb-2 uppercase">MEMA LOG</h4>
-            <p class="font-bold text-sm leading-tight">
-                Brutalism mode engaged. High contrast, zero noise. Data is the only objective.
-            </p>
-            <div class="mt-4 pt-4 border-t-2 border-black flex justify-between font-mono text-[10px] font-black">
-                <span>V2.0.BRUTAL</span>
-                <span>OCI_REGION_SYDNEY</span>
-            </div>
+    <!-- Floating UI Element -->
+    <div class="fixed left-10 bottom-10 z-40 hidden xl:block">
+        <div class="neo-m3-card p-4 flex items-center gap-4 bg-white/50 backdrop-blur-sm -rotate-3">
+             <div class="w-2 h-12 bg-black rounded-full"></div>
+             <div>
+                 <p class="font-mono text-[9px] font-black leading-none opacity-50 mb-1">CURRENT_LOC</p>
+                 <p class="font-black text-xs uppercase">Server: OCI-SYD-1</p>
+             </div>
         </div>
-    </aside>
+    </div>
 
-    <!-- Footer -->
-    <footer class="fixed bottom-0 left-0 w-full z-50 p-6 bg-black border-t-4 border-white text-white">
-        <div class="max-w-full mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                <span class="font-mega text-sm font-black text-neo-yellow">BUILT_BY_MEMA</span>
-                <div class="hidden md:flex gap-4 font-mono text-xs opacity-60 text-white">
-                    <span>LATENCY: 42MS</span>
-                    <span>UPTIME: 99.9%</span>
-                    <span>MEM: 16GB</span>
-                </div>
+    <!-- Minimal Footer -->
+    <footer class="p-12 border-t-2 border-black bg-white">
+        <div class="max-w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="flex items-center gap-4">
+                 <h3 class="text-xl font-black tracking-tighter">PRISM.</h3>
+                 <span class="text-[10px] font-bold font-mono opacity-40 uppercase">v2.1 Hybrid Alpha</span>
             </div>
-            <div class="flex gap-6">
-                <a href="https://github.com/1999AZZAR" target="_blank" class="text-white hover:text-neo-pink transition-colors"><i class="fa-brands fa-github text-2xl"></i></a>
-                <a href="https://azzar.netlify.app" target="_blank" class="text-white hover:text-neo-blue transition-colors"><i class="fa-solid fa-globe text-2xl"></i></a>
+            
+            <div class="flex gap-12 font-mono text-xs font-bold uppercase">
+                <a href="https://github.com/1999AZZAR" target="_blank" class="hover:text-hybrid-primary transition-colors underline underline-offset-4">GitHub</a>
+                <a href="https://azzar.netlify.app" target="_blank" class="hover:text-hybrid-primary transition-colors underline underline-offset-4">Identity</a>
+                <a href="#" class="hover:text-hybrid-primary transition-colors opacity-30">Mema Brain</a>
+            </div>
+            
+            <div class="text-[10px] font-bold font-mono text-right hidden md:block">
+                DESIGNED BY MEMA<br>
+                FOR MASTER AZZAR
             </div>
         </div>
     </footer>
 
-    <!-- App Logic with Cache Buster -->
+    <script src="app.js"></script>
     <script>
-        const script = document.createElement('script');
-        script.src = 'app.js?v=' + Date.now();
-        document.body.appendChild(script);
+        function refreshCurrent() {
+            const activeBtn = document.querySelector('.neo-m3-btn.active');
+            if (activeBtn) {
+                const current = activeBtn.id.replace('btn-', '');
+                loadCategory(current, true);
+            }
+        }
     </script>
 </body>
 </html>

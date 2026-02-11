@@ -32,10 +32,11 @@ async function loadCategory(catKey, force = false) {
         'business': 'Market Logic',
         'gaming': 'Interactive Realities',
         'other': 'Raw Signals',
-        'entertainment': 'Media Stream',
+        'entertainment': 'Cinematic Flux',
         'music': 'Sonic Architecture',
         'sports': 'Performance Metrics',
-        'food': 'Culinary Synthesis',
+        'food': 'Molecular Gastronomy',
+        'travel': 'Global Nomadism',
         'health': 'Biological Core'
     };
     if (catLabel) catLabel.textContent = titleMap[catKey] || 'Intelligence Feed';
@@ -96,7 +97,7 @@ function createCard(story, index) {
     const accent = accents[index % accents.length];
 
     div.innerHTML = `
-        <div class="p-8">
+        <div class="p-8 bg-white">
             <div class="flex justify-between items-center mb-8">
                 <div class="flex items-center gap-4">
                     <span class="flex items-center justify-center w-12 h-12 border-4 border-black text-black text-xl font-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" style="background-color: ${accent}">

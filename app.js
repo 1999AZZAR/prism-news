@@ -20,7 +20,7 @@ async function loadCategory(catKey, force = false) {
     const targetBtn = document.getElementById(`btn-${catKey}`);
     if (targetBtn) targetBtn.classList.add('active');
 
-    // Update Labels
+    // Update Hero Title & Label
     const catLabel = document.getElementById('category-label');
     const titleMap = {
         'tech': 'Technological Frontier',
@@ -31,7 +31,7 @@ async function loadCategory(catKey, force = false) {
         'world': 'Global Context',
         'business': 'Market Logic',
         'gaming': 'Interactive Realities',
-        'other': 'The Archive',
+        'other': 'Raw Signals',
         'entertainment': 'Media Stream',
         'music': 'Sonic Architecture',
         'sports': 'Performance Metrics',
@@ -44,8 +44,8 @@ async function loadCategory(catKey, force = false) {
     const feed = document.getElementById('news-feed');
     const loader = document.getElementById('loading');
     
-    feed.classList.add('opacity-0');
-    loader.classList.remove('hidden');
+    feed.style.display = 'none';
+    loader.style.display = 'flex';
 
     try {
         const response = await fetch(`/api/news?category=${catKey}&t=${Date.now()}`);
@@ -55,16 +55,16 @@ async function loadCategory(catKey, force = false) {
         feed.innerHTML = '';
         
         // Hide Loader
-        loader.classList.add('hidden');
+        loader.style.display = 'none';
 
         if (!stories || stories.length === 0) {
             feed.innerHTML = `
-                <div class="col-span-full neo-m3-card p-20 text-center">
-                    <h3 class="font-black text-4xl uppercase tracking-tighter mb-4">No Signals Detected</h3>
-                    <p class="font-mono text-xs opacity-50 uppercase tracking-widest">Uplink sequence silent for category: ${catKey}</p>
+                <div class="col-span-full neo-m3-card p-24 text-center bg-white">
+                    <h3 class="font-black text-6xl uppercase tracking-tighter mb-4 text-black">SILENCE</h3>
+                    <p class="font-mono text-xs font-black uppercase tracking-widest text-slate-400">Zero data received from current uplink: ${catKey}</p>
                 </div>
             `;
-            feed.classList.remove('opacity-0');
+            feed.style.display = 'grid';
             return;
         }
 
@@ -73,12 +73,12 @@ async function loadCategory(catKey, force = false) {
             feed.appendChild(card);
         });
 
-        // Trigger fade in
-        feed.classList.remove('opacity-0');
+        // Show grid
+        feed.style.display = 'grid';
 
     } catch (e) {
         console.error(e);
-        loader.innerHTML = '<div class="neo-m3-card p-10 bg-red-500 text-white font-black text-xl">UPLINK_FAILURE: CHECK GRID CONNECTION.</div>';
+        loader.innerHTML = '<div class="neo-m3-card p-10 bg-red-600 text-white font-black text-2xl uppercase">Critical Uplink Failure.</div>';
     } finally {
         isLoading = false;
     }
@@ -86,65 +86,60 @@ async function loadCategory(catKey, force = false) {
 
 function createCard(story, index) {
     const div = document.createElement('div');
-    div.className = 'neo-m3-card p-0 flex flex-col justify-between overflow-hidden group';
+    div.className = 'neo-m3-card flex flex-col justify-between overflow-hidden group';
     
     const time = new Date(story.time * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const date = new Date(story.time * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' });
     
-    // Tonal Pastel Accents
-    const accents = [
-        'bg-hybrid-pastel-purple', 
-        'bg-hybrid-pastel-blue', 
-        'bg-hybrid-pastel-green', 
-        'bg-hybrid-pastel-pink'
-    ];
+    // Verge-style Tonal Accents
+    const accents = ['#ff00ff', '#3b82f6', '#22c55e', '#f97316', '#a855f7'];
     const accent = accents[index % accents.length];
 
     div.innerHTML = `
         <div class="p-8">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-8">
                 <div class="flex items-center gap-4">
-                    <span class="inline-flex items-center justify-center w-12 h-12 neo-m3-border ${accent} text-black text-xl font-black">
+                    <span class="flex items-center justify-center w-12 h-12 border-4 border-black text-black text-xl font-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" style="background-color: ${accent}">
                         ${index + 1}
                     </span>
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-tighter text-slate-400">${story.source_name || 'Hacker News'}</p>
-                        <p class="text-[10px] font-bold text-black uppercase opacity-60">${date}</p>
+                    <div class="flex flex-col">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">${story.source_name || 'Hacker News'}</p>
+                        <p class="text-[10px] font-bold text-black uppercase opacity-40">${date}</p>
                     </div>
                 </div>
-                <div class="font-mono text-[9px] font-black bg-slate-100 text-black px-2 py-1 neo-m3-border rounded-lg border-2">
+                <div class="font-mono text-[10px] font-bold bg-black text-white px-3 py-1.5 rounded-lg">
                     ${time}
                 </div>
             </div>
             
-            <h3 class="text-2xl font-black leading-tight mb-6 group-hover:text-hybrid-primary transition-colors duration-300">
+            <h3 class="text-3xl font-black leading-[1.1] mb-8 text-black group-hover:text-hybrid-primary transition-colors duration-300 tracking-tight">
                 <a href="${story.url}" target="_blank" class="focus:outline-none">
                     ${story.title}
                 </a>
             </h3>
             
-            <div class="flex items-center gap-2 mb-2">
-                <span class="verge-accent text-[9px]">Domain</span>
-                <p class="font-mono text-[10px] font-black uppercase tracking-tight text-slate-400">
+            <div class="flex items-center gap-2">
+                <span class="verge-label text-[9px]">Uplink</span>
+                <p class="font-mono text-[10px] font-black uppercase tracking-tight text-slate-500">
                     ${story.domain}
                 </p>
             </div>
         </div>
 
-        <div class="bg-slate-50 p-6 border-t-2 border-black flex items-center justify-between">
-            <div class="flex gap-6">
+        <div class="bg-slate-50 p-6 border-t-4 border-black flex items-center justify-between">
+            <div class="flex gap-8">
                 <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase opacity-40">Author</span>
-                    <span class="text-xs font-black truncate max-w-[100px] text-slate-800">${story.author}</span>
+                    <span class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Signal By</span>
+                    <span class="text-xs font-black text-black truncate max-w-[120px]">${story.author}</span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase opacity-40">Weight</span>
-                    <span class="text-xs font-bold text-hybrid-primary">${formatScore(story.score)}</span>
+                    <span class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Magnitude</span>
+                    <span class="text-xs font-black text-hybrid-primary">${formatScore(story.score)}</span>
                 </div>
             </div>
             
-            <a href="${story.commentsUrl}" target="_blank" class="w-12 h-12 bg-white neo-m3-border border-2 flex items-center justify-center text-black hover:bg-black hover:text-white transition-all rounded-xl shadow-neo-sm hover:shadow-none active:translate-x-1 active:translate-y-1">
-                <i class="fa-solid fa-comment-dots text-lg"></i>
+            <a href="${story.commentsUrl}" target="_blank" class="w-14 h-14 bg-white border-4 border-black flex items-center justify-center text-black hover:bg-black hover:text-white transition-all rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none active:translate-x-1 active:translate-y-1">
+                <i class="fa-solid fa-comment-dots text-2xl"></i>
             </a>
         </div>
     `;

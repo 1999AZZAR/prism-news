@@ -1,205 +1,287 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRISM | The Signal</title>
+    <title>PRISM | Intelligence Feed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        dark: '#0f172a', /* Slate 900 */
-                        surface: '#1e293b', /* Slate 800 */
-                        pastel: {
-                            purple: '#c4b5fd',
-                            blue: '#bfdbfe',
-                            pink: '#fbcfe8',
-                            green: '#bbf7d0'
+                        dark: '#020617', /* Slate 950 */
+                        void: '#0a0a0f',
+                        surface: '#0f172a', /* Slate 900 */
+                        accent: {
+                            primary: '#c4b5fd', /* Lavender */
+                            secondary: '#7dd3fc', /* Sky */
+                            tertiary: '#f9a8d4'  /* Pink */
+                        },
+                        m3: {
+                            primary: '#D0BCFF',
+                            onPrimary: '#381E72',
+                            primaryContainer: '#4F378B',
+                            onPrimaryContainer: '#EADDFF',
+                            secondary: '#CCC2DC',
+                            onSecondary: '#332D41',
+                            secondaryContainer: '#4A4458',
+                            onSecondaryContainer: '#E8DEF8'
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    borderRadius: {
+                        '4xl': '2rem',
+                        '5xl': '2.5rem'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        
         body {
-            background-color: #0f172a;
-            /* Radial gradient removed/reduced to let particles shine, keeping a subtle base */
-            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%); 
-            min-height: 100vh;
+            background-color: #020617;
+            overflow-x: hidden;
         }
 
         #particles-js {
             position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1; /* Behind everything */
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .mesh-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-color: #020617;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.15) 0, transparent 50%);
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(196, 181, 253, 0.3);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Nav Button Styles */
-        .nav-btn {
-            padding: 0.5rem 1rem;
+        .nav-pill {
+            padding: 0.6rem 1.25rem;
             border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            color: #94a3b8; /* slate-400 */
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #94a3b8;
+            border: 1px solid transparent;
             white-space: nowrap;
         }
         
-        .nav-btn:hover {
+        .nav-pill:hover {
             color: white;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .active-nav {
-            background: rgba(196, 181, 253, 0.1); /* pastel-purple / 10% */
-            color: #c4b5fd; /* pastel-purple */
-            border: 1px solid rgba(196, 181, 253, 0.2);
+        .nav-pill.active {
+            background: #D0BCFF; /* m3 primary */
+            color: #381E72; /* m3 onPrimary */
+            box-shadow: 0 10px 15px -3px rgba(196, 181, 253, 0.3);
         }
 
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, #D0BCFF 50%, #7dd3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        .logo-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
         }
     </style>
 </head>
-<body class="text-slate-200 antialiased selection:bg-pastel-purple selection:text-dark">
+<body class="text-slate-200 antialiased selection:bg-accent-primary/30 selection:text-white">
 
+    <div class="mesh-gradient"></div>
     <div id="particles-js"></div>
 
-    <!-- Header -->
-    <header class="fixed top-0 w-full z-50 transition-all duration-300">
-        <div class="glass border-b border-white/5 bg-slate-900/50 backdrop-blur-xl">
-            <div class="max-w-7xl mx-auto px-6 py-4">
-                <div class="flex items-center justify-between gap-6">
-                    <!-- Logo -->
-                    <div class="flex items-center shrink-0">
-                        <h1 class="text-3xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-pastel-purple to-pastel-blue hover:to-white transition-all cursor-default select-none">
-                            PRISM
-                        </h1>
-                    </div>
-
-                    <!-- Categories -->
-                    <nav class="flex gap-2 overflow-x-auto no-scrollbar min-w-0">
-                        <button onclick="loadCategory('tech')" id="btn-tech" class="nav-btn active-nav">Tech</button>
-                        <button onclick="loadCategory('ai')" id="btn-ai" class="nav-btn">AI</button>
-                        <button onclick="loadCategory('design')" id="btn-design" class="nav-btn">Design</button>
-                        <button onclick="loadCategory('world')" id="btn-world" class="nav-btn">World</button>
-                        <button onclick="loadCategory('science')" id="btn-science" class="nav-btn">Science</button>
-                        <button onclick="loadCategory('business')" id="btn-business" class="nav-btn">Business</button>
-                        <button onclick="loadCategory('gaming')" id="btn-gaming" class="nav-btn">Gaming</button>
-                        <button onclick="loadCategory('entertainment')" id="btn-entertainment" class="nav-btn">Entertainment</button>
-                        <button onclick="loadCategory('music')" id="btn-music" class="nav-btn">Music</button>
-                        <button onclick="loadCategory('sports')" id="btn-sports" class="nav-btn">Sports</button>
-                        <button onclick="loadCategory('food')" id="btn-food" class="nav-btn">Food</button>
-                        <button onclick="loadCategory('travel')" id="btn-travel" class="nav-btn">Travel</button>
-                        <button onclick="loadCategory('health')" id="btn-health" class="nav-btn">Health</button>
-                        <div class="w-px h-6 bg-white/10 mx-1 self-center"></div>
-                        <button onclick="loadCategory('other')" id="btn-other" class="nav-btn text-slate-500">Other</button>
-                    </nav>
+    <!-- Top Navigation -->
+    <header class="fixed top-0 w-full z-50 p-4 md:p-6 pointer-events-none">
+        <div class="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
+            <!-- Logo -->
+            <div onclick="window.location.reload()" class="glass px-6 py-3 rounded-full flex items-center gap-3 group cursor-pointer">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-accent-primary to-accent-secondary flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-500">
+                    <i class="fa-solid fa-cube text-void text-lg"></i>
                 </div>
+                <h1 class="text-xl logo-text tracking-tighter text-white">
+                    PRISM<span class="text-accent-primary">.</span>
+                </h1>
+            </div>
+
+            <!-- Categories Wrapper -->
+            <nav class="hidden xl:flex glass p-1.5 rounded-full items-center gap-1">
+                <button onclick="loadCategory('tech')" id="btn-tech" class="nav-pill active">Tech</button>
+                <button onclick="loadCategory('ai')" id="btn-ai" class="nav-pill">AI</button>
+                <button onclick="loadCategory('design')" id="btn-design" class="nav-pill">Design</button>
+                <button onclick="loadCategory('science')" id="btn-science" class="nav-pill">Science</button>
+                <button onclick="loadCategory('world')" id="btn-world" class="nav-pill">World</button>
+                <button onclick="loadCategory('business')" id="btn-business" class="nav-pill">Business</button>
+                <button onclick="loadCategory('gaming')" id="btn-gaming" class="nav-pill">Gaming</button>
+                <button onclick="loadCategory('entertainment')" id="btn-entertainment" class="nav-pill">Media</button>
+                <div class="w-px h-4 bg-white/10 mx-1"></div>
+                <button onclick="loadCategory('other')" id="btn-other" class="nav-pill opacity-60">Other</button>
+            </nav>
+
+            <!-- Status Indicator -->
+            <div class="glass px-4 py-3 rounded-full flex items-center gap-3">
+                <div class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400 hidden md:inline">Sync Active</span>
+                <button onclick="refreshCurrent()" class="text-slate-400 hover:text-white transition-colors ml-2">
+                    <i class="fa-solid fa-rotate-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile/Tablet Categories -->
+        <div class="mt-4 xl:hidden max-w-full overflow-x-auto no-scrollbar pointer-events-auto">
+            <div class="flex gap-2 px-4">
+                <button onclick="loadCategory('tech')" id="m-btn-tech" class="nav-pill glass active">Tech</button>
+                <button onclick="loadCategory('ai')" id="m-btn-ai" class="nav-pill glass">AI</button>
+                <button onclick="loadCategory('design')" id="m-btn-design" class="nav-pill glass">Design</button>
+                <button onclick="loadCategory('science')" id="m-btn-science" class="nav-pill glass">Science</button>
+                <button onclick="loadCategory('world')" id="m-btn-world" class="nav-pill glass">World</button>
+                <button onclick="loadCategory('business')" id="m-btn-business" class="nav-pill glass">Business</button>
+                <button onclick="loadCategory('gaming')" id="m-btn-gaming" class="nav-pill glass">Gaming</button>
+                <button onclick="loadCategory('other')" id="m-btn-other" class="nav-pill glass">Other</button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 pt-32 pb-20">
+    <main class="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-32">
         
-        <!-- Welcome Hero -->
-        <div class="mb-12 text-center">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pastel-blue via-pastel-purple to-pastel-pink">
-                Curated for Engineers
+        <!-- Hero Section -->
+        <section class="mb-20 text-center relative">
+            <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-accent-primary/20 blur-[120px] rounded-full"></div>
+            <h2 id="category-title" class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight text-gradient">
+                Intelligent Synthesis
             </h2>
-            <p class="text-slate-400 text-lg max-w-2xl mx-auto font-light">
-                The top stories from the hive mind, distilled into a clean, distraction-free feed.
+            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed opacity-80">
+                A hyper-curated feed of the engineering world. <br class="hidden md:block">
+                Distilled from the signal, ignoring the noise.
             </p>
-        </div>
+        </section>
 
-        <div id="loading" class="text-center py-20">
-            <div class="inline-block w-12 h-12 border-4 border-white/10 border-t-pastel-purple rounded-full animate-spin mb-4"></div>
-            <p class="text-slate-400 animate-pulse">Syncing with the grid...</p>
-        </div>
+        <!-- Feed Section -->
+        <section class="relative">
+            <!-- Loading State -->
+            <div id="loading" class="flex flex-col items-center justify-center py-40 transition-opacity duration-300">
+                <div class="relative">
+                    <div class="w-16 h-16 border-2 border-accent-primary/20 rounded-full"></div>
+                    <div class="w-16 h-16 border-t-2 border-accent-primary rounded-full animate-spin absolute inset-0"></div>
+                </div>
+                <p class="mt-8 text-accent-primary font-mono text-sm tracking-[0.3em] uppercase animate-pulse">Initializing Flux</p>
+            </div>
 
-        <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Cards will be injected here -->
-        </div>
+            <!-- Feed Grid -->
+            <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 opacity-0 transition-opacity duration-700">
+                <!-- Cards injected here -->
+            </div>
+        </section>
 
     </main>
 
-    <!-- Infinite Scroll Loader -->
-    <div id="infinite-loader" class="text-center py-10 hidden">
-        <div class="inline-block w-8 h-8 border-4 border-white/10 border-t-pastel-blue rounded-full animate-spin"></div>
-    </div>
+    <!-- Floating Footer -->
+    <footer class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
+        <div class="glass px-6 py-3 rounded-full flex items-center justify-between shadow-2xl">
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Built by</span>
+                <span class="text-xs font-bold text-white tracking-tight">MEMA<span class="text-accent-primary">.</span></span>
+            </div>
+            <div class="w-px h-4 bg-white/10 mx-4"></div>
+            <div class="flex items-center gap-6">
+                <a href="https://github.com/1999AZZAR" target="_blank" class="text-slate-400 hover:text-white transition-colors"><i class="fa-brands fa-github text-lg"></i></a>
+                <a href="#" class="text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-rss text-lg"></i></a>
+                <a href="https://azzar.netlify.app" target="_blank" class="text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-globe text-lg"></i></a>
+            </div>
+        </div>
+    </footer>
 
     <script src="app.js"></script>
     <script>
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "number": { "value": 40, "density": { "enable": true, "value_area": 1000 } },
                 "color": { "value": "#ffffff" },
                 "shape": { "type": "circle" },
-                "opacity": { "value": 0.1, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#ffffff",
-                    "opacity": 0.05,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 1,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false
-                }
+                "opacity": { "value": 0.05, "random": true },
+                "size": { "value": 2, "random": true },
+                "line_linked": { "enable": true, "distance": 200, "color": "#ffffff", "opacity": 0.03, "width": 1 },
+                "move": { "enable": true, "speed": 0.4, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false }
             },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": { "enable": true, "mode": "grab" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": { "distance": 140, "line_linked": { "opacity": 0.3 } },
-                    "push": { "particles_nb": 4 }
-                }
-            },
+            "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "grab" }, "resize": true }, "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.2 } } } },
             "retina_detect": true
+        });
+
+        function refreshCurrent() {
+            const current = document.querySelector('.nav-pill.active').getAttribute('onclick').match(/'([^']+)'/)[1];
+            loadCategory(current, true);
+        }
+
+        // Sticky Header Logic
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('pt-2');
+            } else {
+                header.classList.remove('pt-2');
+            }
         });
     </script>
 </body>

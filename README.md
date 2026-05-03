@@ -1,58 +1,68 @@
-# PRISM 💎
+# PRISM News
 
-A minimalist, glassmorphic tech news aggregator.
+PRISM News is a containerized news aggregator with a Python backend, Redis cache/storage, and a Swiss-archival frontend.
 
-## Features
+## Current implementation
 
-- **Multi-Source:** Fetches from Hacker News and Reddit (r/worldnews, r/science, etc.)
-- **Glassmorphism UI:** Clean, modern, dark-mode aesthetic.
-- **Infinite Scroll:** Just keep scrolling.
-- **Fast:** Pure vanilla JS + Tailwind CSS (via CDN).
-- **Dynamic Categories:** Users can select specific categories, like "tech", and fetch related articles dynamically.
+- Backend: `server.py` (Flask API + feed ingestion)
+- Frontend: `index.html` + `app.js` (vanilla JS)
+- Data store: Redis (`prism-redis`)
+- App container: `prism-app`
+- Default app port: `5051`
+- API route: `/api/news?category=<category>`
 
-## Project Structure
+## Interface notes
 
-- **Frontend:**
-  - `index.html`: Main entry point for the UI.
-  - `app.js`: Handles dynamic content loading, category navigation, and API calls.
-  - **UI/Design:** Utilizes Tailwind CSS with glassmorphism and pastel themes.
+- Uses a Swiss-archival layout (structured grid, restrained palette, metadata-first typography)
+- Each story card includes a deterministic generated SVG specimen based on article metadata
+- Card action label is `READ_MORE`
 
-- **Backend:**
-  - `server.py`: Manages the API, serves the frontend, and fetches articles from external sources.
-  - **API Endpoint:** `/api/news?category=<category>` provides news items in JSON format.
+## Repository layout
 
-## Setup
+- `server.py`: API service and feed retrieval logic
+- `index.html`: page shell, typography, and archival layout styles
+- `app.js`: category loading, card rendering, SVG specimen generation
+- `requirements.txt`: Python dependencies
+- `Dockerfile`: app image definition
+- `docker-compose.yml`: app + Redis services
 
-### Local Development
+## Run locally with Docker
 
-1. Clone the repository:
-   ```bash
-   git clone https://example.com/micro-news.git
-   cd micro-news
-   ```
-2. Install dependencies and activate the environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-3. Start the backend server:
-   ```bash
-   python server.py
-   ```
-4. Open `index.html` in your browser to view the application.
+From the project directory:
 
-### Deployment
+```bash
+docker compose up -d --build
+```
 
-For deployment, use Docker Compose:
+Open:
 
-1. Build and start containers:
-   ```bash
-   docker-compose up --build
-   ```
+- `http://localhost:5051`
 
-2. Access the application at `http://localhost:8000`.
+Stop services:
 
-## Contribution
+```bash
+docker compose down
+```
 
-Contributions are welcome! Feel free to fork, improve, and submit a pull request.
+Note: `docker compose down` does not remove named volumes unless `-v` is provided.
+
+## Run without Docker
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python server.py
+```
+
+Then open `http://localhost:5051`.
+
+## Rebuild app only (keep Redis data)
+
+If you are using a fixed Compose project name:
+
+```bash
+COMPOSE_PROJECT_NAME=micro-news docker compose up -d --build app
+```
+
+This rebuilds and replaces the app container without deleting the Redis volume.

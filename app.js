@@ -1,172 +1,160 @@
-let currentCategory = 'tech';
+let currentCategory = "tech";
 let isLoading = false;
 
-// Initial Load Fix: Check readyState to avoid race conditions with dynamic injection
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
+const categoryLabels = {
+    tech: "Technological Frontier",
+    edan: "Independent Archive / Edan",
+    ai: "Neural Systems",
+    design: "Design Canon",
+    science: "Research Signals",
+    world: "World Desk",
+    business: "Market Ledger",
+    gaming: "Interactive Media",
+    entertainment: "Culture Desk",
+    music: "Sound Studies",
+    sports: "Sports Bulletin",
+    food: "Food Notes",
+    travel: "Travel Dispatch",
+    health: "Health Review",
+    other: "Open File"
+};
 
-function init() {
-    loadCategory('tech', true); // Force load for the first time
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => loadCategory("tech", true));
+} else {
+    loadCategory("tech", true);
 }
 
 async function loadCategory(catKey, force = false) {
     if (!force && isLoading && currentCategory === catKey) return;
-    
+
     currentCategory = catKey;
     isLoading = true;
+    syncCategoryMeta(catKey);
+    syncNav(catKey);
 
-    // Update Nav Buttons (Desktop)
-    document.querySelectorAll('.neo-m3-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    const targetBtn = document.getElementById(`btn-${catKey}`);
-    if (targetBtn) targetBtn.classList.add('active');
-
-    // Update Nav Pills (Mobile)
-    document.querySelectorAll('.nav-pill').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    const mobileBtn = document.getElementById(`m-btn-${catKey}`);
-    if (mobileBtn) mobileBtn.classList.add('active');
-
-    // Update Hero Title & Label
-    const catLabel = document.getElementById('category-label');
-    const titleMap = {
-        'tech': 'Technological Frontier',
-        'edan': 'Madness Unleashed',
-        'ai': 'Neural Synthetics',
-        'design': 'Visual Engineering',
-        'science': 'Quantum Horizons',
-        'world': 'Global Context',
-        'business': 'Market Logic',
-        'gaming': 'Interactive Realities',
-        'other': 'Raw Signals',
-        'entertainment': 'Cinematic Flux',
-        'music': 'Sonic Architecture',
-        'sports': 'Performance Metrics',
-        'food': 'Molecular Gastronomy',
-        'travel': 'Global Nomadism',
-        'health': 'Biological Core'
-    };
-    if (catLabel) catLabel.textContent = titleMap[catKey] || 'Intelligence Feed';
-
-    // Show Loader & Hide Feed
-    const feed = document.getElementById('news-feed');
-    const loader = document.getElementById('loading');
-    
-    feed.style.display = 'none';
-    loader.style.display = 'flex';
+    const feed = document.getElementById("news-feed");
+    const loader = document.getElementById("loading");
+    loader.style.display = "grid";
+    feed.style.display = "none";
+    feed.innerHTML = "";
 
     try {
-        const response = await fetch(`/api/news?category=${catKey}&t=${Date.now()}`);
+        const response = await fetch(`/api/news?category=${encodeURIComponent(catKey)}&t=${Date.now()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
         const stories = await response.json();
+        loader.style.display = "none";
 
-        // Clear feed
-        feed.innerHTML = '';
-        
-        // Hide Loader
-        loader.style.display = 'none';
-
-        if (!stories || stories.length === 0) {
+        if (!Array.isArray(stories) || stories.length === 0) {
             feed.innerHTML = `
-                <div class="col-span-full neo-m3-card p-24 text-center bg-white" style="background-color: #ffffff; border: 3px solid #000; border-radius: 24px;">
-                    <h3 class="font-black text-6xl uppercase tracking-tighter mb-4 text-black">SILENCE</h3>
-                    <p class="font-mono text-xs font-black uppercase tracking-widest text-slate-400">Zero data received from current uplink: ${catKey}</p>
-                </div>
+                <article class="archive-card archive-empty">
+                    <p class="archive-meta">CATALOG STATUS</p>
+                    <h3>No records available</h3>
+                    <p class="archive-note">No entries were returned for <strong>${safeText(catKey)}</strong>.</p>
+                </article>
             `;
-            feed.style.display = 'grid';
+            feed.style.display = "grid";
             return;
         }
 
-        stories.forEach((story, index) => {
-            const card = createCard(story, index);
-            feed.appendChild(card);
-        });
-
-        // Show grid
-        feed.style.display = 'grid';
-
-    } catch (e) {
-        console.error(e);
-        loader.innerHTML = '<div class="neo-m3-card p-10 bg-red-600 text-white font-black text-2xl uppercase">Critical Uplink Failure.</div>';
+        stories.forEach((story, index) => feed.appendChild(createCard(story, index)));
+        feed.style.display = "grid";
+    } catch (error) {
+        console.error(error);
+        loader.innerHTML = `
+            <div class="archive-loader-panel">
+                <p class="archive-meta">SYSTEM NOTICE</p>
+                <p>Archive stream temporarily unavailable.</p>
+            </div>
+        `;
     } finally {
         isLoading = false;
     }
 }
 
+function syncNav(catKey) {
+    document.querySelectorAll(".archive-nav-btn").forEach((button) => {
+        button.classList.toggle("active", button.id === `btn-${catKey}`);
+    });
+}
+
+function syncCategoryMeta(catKey) {
+    const label = document.getElementById("category-label");
+    const pageTitle = document.getElementById("hero-title");
+    const value = categoryLabels[catKey] || "Open File";
+
+    if (label) label.textContent = value;
+    if (pageTitle) pageTitle.textContent = value;
+}
+
 function createCard(story, index) {
-    const div = document.createElement('div');
-    div.className = 'neo-m3-card flex flex-col justify-between overflow-hidden group';
-    div.style.backgroundColor = '#ffffff';
-    div.style.border = '4px solid #000000';
-    div.style.boxShadow = '8px 8px 0px 0px #000000';
-    div.style.borderRadius = '24px';
-    div.style.position = 'relative';
-    div.style.zIndex = '10';
-    
-    const time = new Date(story.time * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const date = new Date(story.time * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' });
-    
-    // Verge-style Tonal Accents
-    const accents = ['#ff00ff', '#3b82f6', '#22c55e', '#f97316', '#a855f7'];
-    const accent = accents[index % accents.length];
+    const card = document.createElement("article");
+    card.className = "archive-card";
 
-    div.innerHTML = `
-        <div class="p-8">
-            <div class="flex justify-between items-center mb-8">
-                <div class="flex items-center gap-4">
-                    <span class="flex items-center justify-center w-12 h-12 border-4 border-black text-black text-xl font-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" style="background-color: ${accent}">
-                        ${index + 1}
-                    </span>
-                    <div class="flex flex-col">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">${story.source_name || 'Hacker News'}</p>
-                        <p class="text-[10px] font-bold text-black uppercase opacity-40">${date}</p>
-                    </div>
-                </div>
-                <div class="font-mono text-[10px] font-bold bg-black text-white px-3 py-1.5 rounded-lg">
-                    ${time}
-                </div>
-            </div>
-            
-            <h3 class="text-3xl font-black leading-[1.1] mb-8 text-black group-hover:text-hybrid-primary transition-colors duration-300 tracking-tight">
-                <a href="${story.url}" target="_blank" class="focus:outline-none">
-                    ${story.title}
-                </a>
-            </h3>
-            
-            <div class="flex items-center gap-2">
-                <span class="verge-label text-[9px]">Uplink</span>
-                <p class="font-mono text-[10px] font-black uppercase tracking-tight text-slate-500">
-                    ${story.domain}
-                </p>
-            </div>
-        </div>
+    const published = new Date((story.time || 0) * 1000);
+    const safeTitle = safeText(story.title || "Untitled record");
+    const safeSource = safeText(story.source_name || story.domain || "Unknown Source");
+    const safeAuthor = safeText(story.author || "Unknown");
+    const safeDomain = safeText(story.domain || "n/a");
+    const safeUrl = safeUrlOrFallback(story.url);
+    const safeCommentsUrl = safeUrlOrFallback(story.commentsUrl);
 
-        <div class="bg-slate-50 p-6 border-t-4 border-black flex items-center justify-between">
-            <div class="flex gap-8">
-                <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Signal By</span>
-                    <span class="text-xs font-black text-black truncate max-w-[120px]">${story.author}</span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Magnitude</span>
-                    <span class="text-xs font-black text-hybrid-primary">${formatScore(story.score)}</span>
-                </div>
-            </div>
-            
-            <a href="${story.commentsUrl}" target="_blank" class="w-14 h-14 bg-white border-4 border-black flex items-center justify-center text-black hover:bg-black hover:text-white transition-all rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none active:translate-x-1 active:translate-y-1">
-                <i class="fa-solid fa-comment-dots text-2xl"></i>
-            </a>
-        </div>
+    card.innerHTML = `
+        <header class="archive-card-head">
+            <p class="archive-meta">ENTRY ${String(index + 1).padStart(3, "0")}</p>
+            <time class="archive-meta">${formatDate(published)} / ${formatTime(published)}</time>
+        </header>
+
+        <h3 class="archive-title">
+            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeTitle}</a>
+        </h3>
+
+        <p class="archive-note">${safeSource}</p>
+
+        <footer class="archive-card-foot">
+            <dl>
+                <div><dt>AUTHOR</dt><dd>${safeAuthor}</dd></div>
+                <div><dt>SCORE</dt><dd>${formatScore(story.score)}</dd></div>
+                <div><dt>DOMAIN</dt><dd>${safeDomain}</dd></div>
+            </dl>
+            <a class="archive-comments" href="${safeCommentsUrl}" target="_blank" rel="noopener noreferrer">COMMENTS</a>
+        </footer>
     `;
-    return div;
+
+    return card;
 }
 
 function formatScore(score) {
-    if (score >= 1000) return (score / 1000).toFixed(1) + 'k';
-    return score;
+    const value = Number(score || 0);
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+    return `${value}`;
+}
+
+function formatDate(date) {
+    if (Number.isNaN(date.getTime())) return "N/A";
+    return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
+}
+
+function formatTime(date) {
+    if (Number.isNaN(date.getTime())) return "N/A";
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function safeText(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function safeUrlOrFallback(value) {
+    try {
+        const parsed = new URL(value);
+        return parsed.href;
+    } catch {
+        return "#";
+    }
 }

@@ -1,245 +1,342 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRISM | THE HYBRID</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>PRISM | Swiss Archival Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'hybrid-bg': '#f8fafc', 
-                        'hybrid-primary': '#6366f1', 
-                        'hybrid-pastel-purple': '#e9d5ff',
-                        'hybrid-pastel-blue': '#dbeafe',
-                        'hybrid-pastel-green': '#dcfce7',
-                        'hybrid-pastel-pink': '#fce7f3',
-                        'hybrid-dark': '#020617',
-                    },
-                    fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                        space: ['"Space Grotesk"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #E8E0D0;
+            --fg: #2A2520;
+            --surface: #EFE9DC;
+            --accent: #8B1A1A;
+            --accent-hover: #A02020;
+            --muted: #DDD5C5;
+            --muted-fg: #7A7068;
+            --blueprint: rgba(191, 182, 166, 0.2);
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 12px;
+            --motion-fast: 150ms;
+            --motion-normal: 225ms;
+            --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
+            --max-width: 80rem;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            background-color: #f8fafc !important;
-            background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px) !important;
-            background-size: 24px 24px !important;
-            color: #020617 !important;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .neo-m3-card {
-            background: #ffffff !important;
-            border: 3px solid #000000 !important;
-            border-radius: 24px !important;
-            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1) !important;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            z-index: 10;
-        }
-
-        .neo-m3-card:hover {
-            transform: translate(-4px, -4px);
-            box-shadow: 12px 12px 0px 0px rgba(0,0,0,1) !important;
-            border-color: #6366f1 !important;
-        }
-
-        .neo-m3-btn {
-            background: #ffffff !important;
-            border: 2.5px solid #000000 !important;
-            border-radius: 9999px !important;
-            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
-            transition: all 0.2s ease;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .neo-m3-btn:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 5px 5px 0px 0px rgba(0,0,0,1) !important;
-        }
-
-        .neo-m3-btn.active {
-            background: #000000 !important;
-            color: #ffffff !important;
-            box-shadow: none !important;
-            transform: translate(2px, 2px);
-        }
-
-        .nav-pill {
-            padding: 0.5rem 1.25rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            transition: all 0.3s;
-            color: #000;
-            border: 2.5px solid #000;
-            background: #fff;
-            white-space: nowrap;
-            box-shadow: 3px 3px 0px 0px #000;
-        }
-        
-        .nav-pill:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px 0px #000;
-        }
-
-        .nav-pill.active {
-            background: #000;
-            color: #fff;
-            box-shadow: none;
-            transform: translate(1px, 1px);
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .verge-label {
-            background-color: #000;
-            color: #fff;
-            padding: 3px 10px;
-            font-family: "JetBrains Mono", monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            font-weight: 800;
-            display: inline-block;
-        }
-        
-        .wired-title {
+            margin: 0;
+            color: var(--fg);
+            background: var(--bg);
             font-family: "Plus Jakarta Sans", sans-serif;
-            font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -0.04em;
+            line-height: 1.6;
         }
 
-        marquee {
-            font-family: "Lexend Mega", sans-serif;
-            font-weight: 900;
-            border-top: 4px solid #000;
-            border-bottom: 4px solid #000;
-            background: #000;
-            color: #fff;
-            padding: 10px 0;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                repeating-linear-gradient(
+                    to right,
+                    transparent 0,
+                    transparent calc((100% - var(--max-width)) / 2),
+                    var(--blueprint) calc((100% - var(--max-width)) / 2),
+                    var(--blueprint) calc((100% - var(--max-width)) / 2 + 1px),
+                    transparent calc((100% - var(--max-width)) / 2 + 1px),
+                    transparent calc((100% - var(--max-width)) / 2 + ((var(--max-width) / 12) * 1))
+                );
+            opacity: 0.7;
+            z-index: -2;
+        }
+
+        .paper-noise {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.04;
+        }
+
+        .archive-shell {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .archive-header {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--muted);
+        }
+
+        .archive-brand h1 {
+            margin: 0;
+            font-size: 2.25rem;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .archive-brand p {
+            margin: 0.25rem 0 0;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
+            color: var(--muted-fg);
+        }
+
+        .archive-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .archive-nav-btn {
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--fg);
+            padding: 0.5rem 0.75rem;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color var(--motion-fast) var(--ease-state), color var(--motion-fast) var(--ease-state), border-color var(--motion-fast) var(--ease-state);
+        }
+
+        .archive-nav-btn:hover,
+        .archive-nav-btn:focus-visible {
+            background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+            border-color: color-mix(in srgb, var(--accent) 40%, var(--muted));
+            outline: none;
+        }
+
+        .archive-nav-btn.active {
+            background: var(--accent);
+            color: #EFE9DC;
+            border-color: var(--accent);
+        }
+
+        .archive-hero {
+            padding: 2rem 0 1.5rem;
+            border-bottom: 1px solid var(--muted);
+        }
+
+        .archive-meta {
+            margin: 0;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted-fg);
+        }
+
+        #hero-title {
+            margin: 0.75rem 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+        }
+
+        #category-label {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        #loading {
+            display: grid;
+            place-items: center;
+            min-height: 40vh;
+        }
+
+        .archive-loader-panel {
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            padding: 1rem;
+            text-align: left;
+            width: min(32rem, 100%);
+        }
+
+        #news-feed {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 1rem;
+            padding: 1.5rem 0 3rem;
+        }
+
+        .archive-card {
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            display: grid;
+            gap: 1rem;
+            transition: border-color var(--motion-normal) var(--ease-state), transform var(--motion-normal) var(--ease-state);
+        }
+
+        .archive-card:hover {
+            border-color: color-mix(in srgb, var(--accent) 35%, var(--muted));
+            transform: translateY(-1px);
+        }
+
+        .archive-card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .archive-title {
+            margin: 0;
+            font-size: 1.25rem;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .archive-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .archive-title a:hover {
+            color: var(--accent);
+        }
+
+        .archive-note {
+            margin: 0;
+            color: var(--muted-fg);
+            font-size: 0.875rem;
+        }
+
+        .archive-card-foot {
+            border-top: 1px solid var(--muted);
+            padding-top: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .archive-card-foot dl {
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+            min-width: 16rem;
+        }
+
+        .archive-card-foot dt {
+            font: 600 0.625rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            color: var(--muted-fg);
+        }
+
+        .archive-card-foot dd {
+            margin: 0.35rem 0 0;
+            font-size: 0.875rem;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .archive-comments {
+            text-decoration: none;
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            padding: 0.4rem 0.65rem;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--fg);
+            transition: background-color var(--motion-fast) var(--ease-state), color var(--motion-fast) var(--ease-state), border-color var(--motion-fast) var(--ease-state);
+        }
+
+        .archive-comments:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            color: #EFE9DC;
+        }
+
+        .archive-empty {
+            grid-column: 1 / -1;
+        }
+
+        @media (min-width: 48rem) {
+            .archive-shell { padding: 1.5rem; }
+            #news-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (min-width: 80rem) {
+            #news-feed { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
+    <svg class="paper-noise" aria-hidden="true">
+        <filter id="archive-noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#archive-noise)"></rect>
+    </svg>
 
-    <!-- Header Marquee -->
-    <div class="fixed top-0 w-full z-[110]">
-        <marquee scrollamount="12">
-            SYSTEM STATUS: OPERATIONAL // CATEGORY: <span id="marquee-cat">TECH</span> // SOURCE: AGGREGATED // ARCHITECTURE: HYBRID_V2.1 // 
-        </marquee>
+    <div class="archive-shell">
+        <header class="archive-header">
+            <div class="archive-brand">
+                <h1>PRISM</h1>
+                <p>Digital Archive Bulletin</p>
+            </div>
+            <nav class="archive-nav">
+                <button onclick="loadCategory('tech')" id="btn-tech" class="archive-nav-btn active">Tech</button>
+                <button onclick="loadCategory('edan')" id="btn-edan" class="archive-nav-btn">Edan</button>
+                <button onclick="loadCategory('ai')" id="btn-ai" class="archive-nav-btn">AI</button>
+                <button onclick="loadCategory('design')" id="btn-design" class="archive-nav-btn">Design</button>
+                <button onclick="loadCategory('science')" id="btn-science" class="archive-nav-btn">Science</button>
+                <button onclick="loadCategory('world')" id="btn-world" class="archive-nav-btn">World</button>
+                <button onclick="loadCategory('business')" id="btn-business" class="archive-nav-btn">Business</button>
+                <button onclick="loadCategory('gaming')" id="btn-gaming" class="archive-nav-btn">Gaming</button>
+                <button onclick="loadCategory('entertainment')" id="btn-entertainment" class="archive-nav-btn">Media</button>
+                <button onclick="loadCategory('music')" id="btn-music" class="archive-nav-btn">Music</button>
+                <button onclick="loadCategory('sports')" id="btn-sports" class="archive-nav-btn">Sports</button>
+                <button onclick="loadCategory('food')" id="btn-food" class="archive-nav-btn">Food</button>
+                <button onclick="loadCategory('travel')" id="btn-travel" class="archive-nav-btn">Travel</button>
+                <button onclick="loadCategory('health')" id="btn-health" class="archive-nav-btn">Health</button>
+                <button onclick="loadCategory('other')" id="btn-other" class="archive-nav-btn">Other</button>
+            </nav>
+        </header>
+
+        <section class="archive-hero">
+            <p class="archive-meta">CURATED CATEGORY</p>
+            <h2 id="hero-title">Technological Frontier</h2>
+            <p id="category-label">A chronological record of signals selected from live sources.</p>
+        </section>
+
+        <main>
+            <section id="loading">
+                <div class="archive-loader-panel">
+                    <p class="archive-meta">LOADING</p>
+                    <p>Fetching current records from the selected category.</p>
+                </div>
+            </section>
+            <section id="news-feed"></section>
+        </main>
     </div>
 
-    <!-- Main Navigation -->
-    <header class="fixed top-12 w-full z-[100] p-4 md:p-6 bg-white/90 backdrop-blur-xl border-b-4 border-black">
-        <div class="max-w-full mx-auto flex flex-col lg:flex-row items-center gap-6">
-            <!-- Logo -->
-            <div onclick="window.location.reload()" class="flex items-center gap-4 cursor-pointer group">
-                <div class="w-12 h-12 rounded-2xl bg-black flex items-center justify-center group-hover:bg-hybrid-primary transition-all duration-500 shadow-lg">
-                    <i class="fa-solid fa-bolt text-white text-2xl"></i>
-                </div>
-                <h1 class="text-3xl font-black wired-title tracking-tighter text-black">PRISM<span class="text-hybrid-primary">.</span></h1>
-            </div>
-
-            <!-- Categories -->
-            <nav class="flex gap-3 overflow-x-auto no-scrollbar py-2 flex-1 w-full lg:w-auto">
-                <button onclick="loadCategory('tech')" id="btn-tech" class="neo-m3-btn px-6 py-2.5 active">Tech</button>
-                <button onclick="loadCategory('edan')" id="btn-edan" class="neo-m3-btn px-6 py-2.5 border-dashed bg-hybrid-pastel-pink text-black">Edan</button>
-                <button onclick="loadCategory('ai')" id="btn-ai" class="neo-m3-btn px-6 py-2.5">AI</button>
-                <button onclick="loadCategory('design')" id="btn-design" class="neo-m3-btn px-6 py-2.5">Design</button>
-                <button onclick="loadCategory('science')" id="btn-science" class="neo-m3-btn px-6 py-2.5">Science</button>
-                <button onclick="loadCategory('world')" id="btn-world" class="neo-m3-btn px-6 py-2.5">World</button>
-                <button onclick="loadCategory('business')" id="btn-business" class="neo-m3-btn px-6 py-2.5">Business</button>
-                <button onclick="loadCategory('gaming')" id="btn-gaming" class="neo-m3-btn px-6 py-2.5">Gaming</button>
-                <button onclick="loadCategory('entertainment')" id="btn-entertainment" class="neo-m3-btn px-6 py-2.5">Media</button>
-                <button onclick="loadCategory('music')" id="btn-music" class="neo-m3-btn px-6 py-2.5">Music</button>
-                <button onclick="loadCategory('sports')" id="btn-sports" class="neo-m3-btn px-6 py-2.5">Sports</button>
-                <button onclick="loadCategory('food')" id="btn-food" class="neo-m3-btn px-6 py-2.5">Food</button>
-                <button onclick="loadCategory('travel')" id="btn-travel" class="neo-m3-btn px-6 py-2.5">Travel</button>
-                <button onclick="loadCategory('health')" id="btn-health" class="neo-m3-btn px-6 py-2.5">Health</button>
-                <button onclick="loadCategory('other')" id="btn-other" class="neo-m3-btn px-6 py-2.5 opacity-50">Other</button>
-            </nav>
-            
-            <!-- Desktop Tools -->
-            <div class="hidden lg:flex items-center gap-4">
-                <button onclick="refreshCurrent()" class="neo-m3-btn p-3 bg-hybrid-bg">
-                    <i class="fa-solid fa-rotate-right text-xl text-black"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="relative z-10 max-w-[1700px] mx-auto px-6 pt-96 xl:pt-48 pb-40">
-        
-        <!-- Welcome Hero -->
-        <section class="mb-20 border-l-[12px] border-black pl-10">
-            <p class="font-mono text-sm font-black text-hybrid-primary uppercase tracking-[0.3em] mb-4">Uplink Sequence Active</p>
-            <h2 id="hero-title" class="text-6xl md:text-9xl font-black wired-title uppercase tracking-tighter text-black">
-                THE SIGNAL
-            </h2>
-            <div class="mt-6 flex flex-wrap items-center gap-6">
-                <span class="verge-label text-sm" id="category-label">Technological Frontier</span>
-                <div class="h-1 w-20 bg-black"></div>
-                <span class="font-mono text-xs font-black uppercase opacity-40">Edition: Wong Edan v2.1</span>
-            </div>
-        </section>
-
-        <!-- Feed Section -->
-        <section class="relative">
-            <!-- Loading State -->
-            <div id="loading" class="flex flex-col items-center justify-center py-40">
-                <div class="w-24 h-24 border-[6px] border-black border-t-hybrid-primary rounded-full animate-spin"></div>
-                <p class="mt-8 font-mega font-black text-xl uppercase tracking-widest text-black animate-pulse">Filtering Noise...</p>
-            </div>
-
-            <!-- Feed Grid -->
-            <div id="news-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-                <!-- Cards injected here -->
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Sidebar Log -->
-    <aside class="fixed right-10 bottom-10 z-50 hidden 2xl:block">
-        <div class="neo-m3-card p-6 max-w-xs rotate-1 bg-white">
-            <div class="flex items-center gap-2 mb-3">
-                <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                <span class="font-mono text-[10px] font-black uppercase text-black">System_Log</span>
-            </div>
-            <p class="font-bold text-sm leading-snug text-black">
-                Hybrid Core engaged. Wired typography meets M3 accessibility. Pure focus mode.
-            </p>
-            <div class="mt-4 flex gap-4 text-black">
-                <a href="https://github.com/1999AZZAR" target="_blank" class="hover:text-hybrid-primary transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
-                <a href="https://azzar.netlify.app" target="_blank" class="hover:text-hybrid-primary transition-colors"><i class="fa-solid fa-globe text-xl"></i></a>
-            </div>
-        </div>
-    </aside>
-
-    <!-- App Logic with Cache Buster -->
-    <script>
-        const script = document.createElement('script');
-        script.src = 'app.js?v=' + Date.now();
-        document.body.appendChild(script);
-    </script>
+    <script src="app.js?v=swiss-archival"></script>
 </body>
 </html>

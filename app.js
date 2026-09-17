@@ -19,6 +19,8 @@ const categoryLabels = {
     food: "Food Notes",
     travel: "Travel Dispatch",
     health: "Health Review",
+    politics: "Statecraft & Policy",
+    disaster: "Crisis & Disaster Ledger",
     other: "Open File"
 };
 

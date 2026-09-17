@@ -90,6 +90,18 @@ CATEGORY_KEYWORDS = {
         'health', 'medicine', 'medical', 'hospital', 'doctor', 'wellness', 'nutrition', 'disease', 'mental health',
         'fitness', 'therapy', 'virus', 'vaccine', 'clinical', 'pharmaceutical', 'diet', 'cardio', 'sleep',
         'symptom', 'cancer', 'treatment', 'fda'
+    ],
+    'politics': [
+        'politics', 'political', 'election', 'elections', 'senate', 'congress', 'parliament',
+        'policy', 'legislation', 'lawmaker', 'diplomacy', 'geopolitics', 'democrat', 'republican',
+        'biden', 'trump', 'cabinet', 'minister', 'governor', 'voting', 'ballot', 'campaign',
+        'treaty', 'sanction', 'veto', 'statute', 'constitution', 'supremacy'
+    ],
+    'disaster': [
+        'disaster', 'disasters', 'earthquake', 'tsunami', 'hurricane', 'typhoon', 'cyclone',
+        'tornado', 'flood', 'flooding', 'wildfire', 'fire', 'volcano', 'eruption', 'evacuation',
+        'casualty', 'casualties', 'landslide', 'storm', 'blizzard', 'drought', 'emergency',
+        'rescue', 'fema', 'bmkg', 'richter', 'aftershock', 'warning', 'hazard'
     ]
 }
 
@@ -202,7 +214,20 @@ def init_db():
             # HEALTH
             ('NYT Health', 'https://rss.nytimes.com/services/xml/rss/nyt/Health.xml', 'health', 'rss'),
             ('BBC Health', 'https://feeds.bbci.co.uk/news/health/rss.xml', 'health', 'rss'),
-            ('NPR Health', 'https://feeds.npr.org/1128/rss.xml', 'health', 'rss')
+            ('NPR Health', 'https://feeds.npr.org/1128/rss.xml', 'health', 'rss'),
+
+            # POLITICS
+            ('Glass Gallery (Politik)', 'https://wp.glassgallery.my.id/category/politik/feed/', 'politics', 'rss'),
+            ('Politico', 'https://rss.politico.com/politics-news.xml', 'politics', 'rss'),
+            ('BBC Politics', 'http://feeds.bbci.co.uk/news/politics/rss.xml', 'politics', 'rss'),
+            ('The Hill', 'https://thehill.com/feed/', 'politics', 'rss'),
+            ('The Guardian (Politics)', 'https://www.theguardian.com/politics/rss', 'politics', 'rss'),
+
+            # DISASTER
+            ('Glass Gallery (Bencana)', 'https://wp.glassgallery.my.id/category/bencana/feed/', 'disaster', 'rss'),
+            ('USGS Earthquakes', 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.atom', 'disaster', 'rss'),
+            ('GDACS Alerts', 'https://www.gdacs.org/xml/rss.xml', 'disaster', 'rss'),
+            ('NASA Natural Hazards', 'https://earthobservatory.nasa.gov/feeds/natural-hazards.rss', 'disaster', 'rss')
         ]
 
         cur = conn.execute('SELECT count(*) FROM feeds')
@@ -673,7 +698,7 @@ def worker_thread():
             init_db()
 
             # Fast priority load for instant user response
-            priority_cats = ['tech', 'edan', 'ai', 'world', 'science', 'business']
+            priority_cats = ['tech', 'edan', 'ai', 'politics', 'disaster', 'world', 'science', 'business']
             for cat in priority_cats:
                 try:
                     fetch_category(cat)

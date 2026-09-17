@@ -725,6 +725,31 @@ def index():
     return send_from_directory('.', 'index.html')
 
 
+@app.route('/favicon.ico')
+def favicon_ico():
+    return send_from_directory('.', 'favicon.ico', mimetype='image/x-icon')
+
+
+@app.route('/favicon.svg')
+def favicon_svg():
+    return send_from_directory('.', 'favicon.svg', mimetype='image/svg+xml')
+
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory('.', 'robots.txt', mimetype='text/plain')
+
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    return send_from_directory('.', 'sitemap.xml', mimetype='application/xml')
+
+
+@app.route('/manifest.webmanifest')
+def manifest_webmanifest():
+    return send_from_directory('.', 'manifest.webmanifest', mimetype='application/manifest+json')
+
+
 @app.route('/<path:path>')
 def static_files(path):
     return send_from_directory('.', path)

@@ -1,13 +1,18 @@
 let currentCategory = "tech";
 let isLoading = false;
+let rawStories = [];
 let currentStories = [];
 let currentPage = 1;
+let filterQuery = "";
+let focusedCardIndex = -1;
 const ITEMS_PER_PAGE = 21;
 
 const categoryLabels = {
     tech: "Technological Frontier",
     edan: "Independent Archive / Edan",
     ai: "Neural Systems",
+    politics: "Statecraft & Policy",
+    disaster: "Crisis & Disaster Ledger",
     design: "Design Canon",
     science: "Research Signals",
     world: "World Desk",
@@ -19,51 +24,105 @@ const categoryLabels = {
     food: "Food Notes",
     travel: "Travel Dispatch",
     health: "Health Review",
-    politics: "Statecraft & Policy",
-    disaster: "Crisis & Disaster Ledger",
     other: "Open File"
 };
 
+// --- INITIALIZATION ---
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => loadCategory("tech", true));
+    document.addEventListener("DOMContentLoaded", initApp);
 } else {
+    initApp();
+}
+
+function initApp() {
+    setupEventListeners();
+    updateLiveStatus();
     loadCategory("tech", true);
 }
 
-// --- BACK TO TOP (BTT) SCROLL CONTROLLER ---
+// --- EVENT LISTENERS & SHORTCUTS ---
+function setupEventListeners() {
+    // Scroll events for Back to Top (BTT)
+    window.addEventListener("scroll", checkScrollBTT, { passive: true });
+    document.addEventListener("scroll", checkScrollBTT, { passive: true });
+    window.addEventListener("resize", checkScrollBTT, { passive: true });
+
+    // Online / Offline synchronization indicator
+    window.addEventListener("online", updateLiveStatus);
+    window.addEventListener("offline", updateLiveStatus);
+
+    // In-page Quick Filter search box
+    const filterInput = document.getElementById("archive-filter-input");
+    const filterClear = document.getElementById("archive-filter-clear");
+    if (filterInput) {
+        filterInput.addEventListener("input", (e) => {
+            applyFilter(e.target.value);
+        });
+        filterInput.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                clearFilter();
+                filterInput.blur();
+            }
+        });
+    }
+    if (filterClear) {
+        filterClear.addEventListener("click", clearFilter);
+    }
+
+    // Keyboard Command Ledger Navigation
+    document.addEventListener("keydown", handleGlobalKeydown);
+}
+
+function updateLiveStatus() {
+    const pill = document.getElementById("live-indicator");
+    if (!pill) return;
+    if (navigator.onLine) {
+        pill.textContent = "● LIVE";
+        pill.classList.remove("offline");
+        pill.title = "Archive stream synchronized";
+    } else {
+        pill.textContent = "○ OFFLINE";
+        pill.classList.add("offline");
+        pill.title = "Network disconnected — local cache active";
+    }
+}
+
+// --- BACK TO TOP (BTT) CONTROLLER ---
 function checkScrollBTT() {
     const btn = document.getElementById("btt-btn");
     if (!btn) return;
     const scrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || window.scrollY || 0;
-    if (scrollPos > 100) {
+    if (scrollPos > 80) {
         btn.classList.add("visible");
     } else {
         btn.classList.remove("visible");
     }
 }
 
-window.addEventListener("scroll", checkScrollBTT, { passive: true });
-document.addEventListener("scroll", checkScrollBTT, { passive: true });
-window.addEventListener("load", checkScrollBTT);
-document.addEventListener("DOMContentLoaded", checkScrollBTT);
-
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    if (document.documentElement) {
-        document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
-    }
-    if (document.body) {
-        document.body.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    if (document.documentElement) document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+    if (document.body) document.body.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// --- CATEGORY DATA LOADER ---
 async function loadCategory(catKey, force = false) {
     if (!force && isLoading && currentCategory === catKey) return;
 
     currentCategory = catKey;
     isLoading = true;
     currentPage = 1;
+    rawStories = [];
     currentStories = [];
+    focusedCardIndex = -1;
+
+    // Clear filter input on category switch
+    const filterInput = document.getElementById("archive-filter-input");
+    const filterClear = document.getElementById("archive-filter-clear");
+    if (filterInput) filterInput.value = "";
+    if (filterClear) filterClear.style.display = "none";
+    filterQuery = "";
+
     syncCategoryMeta(catKey);
     syncNav(catKey);
 
@@ -93,10 +152,13 @@ async function loadCategory(catKey, force = false) {
             `;
             feed.style.display = "grid";
             if (pagination) pagination.style.display = "none";
+            updateFilterCount(0, 0);
             return;
         }
 
+        rawStories = stories;
         currentStories = stories;
+        updateFilterCount(currentStories.length, rawStories.length);
         renderCurrentPage();
     } catch (error) {
         console.error(error);
@@ -112,6 +174,59 @@ async function loadCategory(catKey, force = false) {
     }
 }
 
+// --- QUICK IN-PAGE SEARCH & FILTER ---
+function applyFilter(query) {
+    filterQuery = (query || "").trim().toLowerCase();
+    const filterClear = document.getElementById("archive-filter-clear");
+    if (filterClear) {
+        filterClear.style.display = filterQuery.length > 0 ? "block" : "none";
+    }
+
+    if (!filterQuery) {
+        currentStories = rawStories;
+    } else {
+        currentStories = rawStories.filter((story) => {
+            const title = (story.title || "").toLowerCase();
+            const source = (story.source_name || story.domain || "").toLowerCase();
+            const author = (story.author || "").toLowerCase();
+            return title.includes(filterQuery) || source.includes(filterQuery) || author.includes(filterQuery);
+        });
+    }
+
+    currentPage = 1;
+    focusedCardIndex = -1;
+    updateFilterCount(currentStories.length, rawStories.length);
+    renderCurrentPage();
+}
+
+function clearFilter() {
+    const filterInput = document.getElementById("archive-filter-input");
+    const filterClear = document.getElementById("archive-filter-clear");
+    if (filterInput) {
+        filterInput.value = "";
+    }
+    if (filterClear) {
+        filterClear.style.display = "none";
+    }
+    filterQuery = "";
+    currentStories = rawStories;
+    currentPage = 1;
+    focusedCardIndex = -1;
+    updateFilterCount(currentStories.length, rawStories.length);
+    renderCurrentPage();
+}
+
+function updateFilterCount(matched, total) {
+    const countEl = document.getElementById("filter-count");
+    if (!countEl) return;
+    if (filterQuery) {
+        countEl.textContent = `MATCHED ${matched} / ${total}`;
+    } else {
+        countEl.textContent = `${total} RECORDS`;
+    }
+}
+
+// --- RENDER CURRENT PAGE ---
 function renderCurrentPage() {
     const feed = document.getElementById("news-feed");
     const pagination = document.getElementById("pagination-wrap");
@@ -119,6 +234,19 @@ function renderCurrentPage() {
 
     const totalItems = currentStories.length;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+    if (totalItems === 0) {
+        feed.innerHTML = `
+            <article class="archive-card archive-empty">
+                <p class="archive-meta">FILTER RESULT</p>
+                <h3>No matching bulletins</h3>
+                <p class="archive-note">Zero records match filter &ldquo;<strong>${safeText(filterQuery)}</strong>&rdquo;. Press <kbd>Esc</kbd> to clear.</p>
+            </article>
+        `;
+        feed.style.display = "grid";
+        if (pagination) pagination.style.display = "none";
+        return;
+    }
 
     if (currentPage > totalPages) currentPage = totalPages || 1;
     if (currentPage < 1) currentPage = 1;
@@ -139,6 +267,8 @@ function renderCurrentPage() {
     } else if (pagination) {
         pagination.style.display = "none";
     }
+
+    focusedCardIndex = -1;
 }
 
 function renderPaginationControls(container, page, totalPages, totalItems) {
@@ -156,7 +286,7 @@ function renderPaginationControls(container, page, totalPages, totalItems) {
 
     // Next Button
     const nextDisabled = page >= totalPages ? "disabled" : "";
-    pagesHtml += `<button class="archive-page-btn" ${nextDisabled} onclick="goToPage(${page + 1})" aria-label="Next page">[ NEXT ]</button>`;
+    pagesHtml += `<button class="archive-page-btn ${nextDisabled} onclick="goToPage(${page + 1})" aria-label="Next page">[ NEXT ]</button>`;
 
     container.innerHTML = `
         <p class="archive-pagination-info">PAGE ${String(page).padStart(2, "0")} OF ${String(totalPages).padStart(2, "0")} &bull; TOTAL ${totalItems} RECORDS</p>
@@ -193,11 +323,16 @@ function syncCategoryMeta(catKey) {
 
     if (label) label.textContent = value;
     if (pageTitle) pageTitle.textContent = value;
+
+    // Dynamic browser tab title
+    document.title = `PRISM — ${value} | Swiss Archival Edition`;
 }
 
+// --- CARD CONSTRUCTOR ---
 function createCard(story, index) {
     const card = document.createElement("article");
     card.className = "archive-card";
+    card.setAttribute("tabindex", "0");
 
     const published = new Date((story.time || 0) * 1000);
     const safeTitle = safeText(story.title || "Untitled record");
@@ -223,7 +358,7 @@ function createCard(story, index) {
         </header>
 
         <h3 class="archive-title">
-            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeTitle}</a>
+            <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="archive-card-link">${safeTitle}</a>
         </h3>
 
         <p class="archive-note">${safeSource}</p>
@@ -241,6 +376,119 @@ function createCard(story, index) {
     return card;
 }
 
+// --- KEYBOARD NAVIGATION & COMMANDS ---
+function handleGlobalKeydown(e) {
+    const modal = document.getElementById("shortcuts-modal");
+    const isModalOpen = modal && modal.style.display !== "none";
+
+    // Handle Escape anywhere
+    if (e.key === "Escape") {
+        if (isModalOpen) {
+            toggleShortcutsModal(false);
+            return;
+        }
+        const filterInput = document.getElementById("archive-filter-input");
+        if (filterInput && document.activeElement === filterInput) {
+            clearFilter();
+            filterInput.blur();
+            return;
+        }
+    }
+
+    // Ignore other navigation keys if user is typing in filter or any input
+    const isTyping = document.activeElement && (
+        document.activeElement.tagName === "INPUT" ||
+        document.activeElement.tagName === "TEXTAREA" ||
+        document.activeElement.isContentEditable
+    );
+    if (isTyping) return;
+
+    if (e.key === "?") {
+        e.preventDefault();
+        toggleShortcutsModal();
+        return;
+    }
+
+    if (e.key === "/") {
+        e.preventDefault();
+        const filterInput = document.getElementById("archive-filter-input");
+        if (filterInput) {
+            filterInput.focus();
+            filterInput.select();
+        }
+        return;
+    }
+
+    if (e.key === "t" || e.key === "Home") {
+        e.preventDefault();
+        scrollToTop();
+        return;
+    }
+
+    if (e.key === "[") {
+        e.preventDefault();
+        goToPage(currentPage - 1);
+        return;
+    }
+
+    if (e.key === "]") {
+        e.preventDefault();
+        goToPage(currentPage + 1);
+        return;
+    }
+
+    // Card J / K / Down / Up selection
+    const cards = Array.from(document.querySelectorAll("#news-feed .archive-card:not(.archive-empty)"));
+    if (cards.length === 0) return;
+
+    if (e.key === "j" || e.key === "ArrowDown") {
+        e.preventDefault();
+        focusedCardIndex = Math.min(focusedCardIndex + 1, cards.length - 1);
+        highlightFocusedCard(cards);
+        return;
+    }
+
+    if (e.key === "k" || e.key === "ArrowUp") {
+        e.preventDefault();
+        focusedCardIndex = Math.max(focusedCardIndex - 1, 0);
+        highlightFocusedCard(cards);
+        return;
+    }
+
+    if (e.key === "Enter" || e.key === "o") {
+        if (focusedCardIndex >= 0 && focusedCardIndex < cards.length) {
+            const link = cards[focusedCardIndex].querySelector(".archive-card-link");
+            if (link && link.href) {
+                e.preventDefault();
+                window.open(link.href, "_blank", "noopener,noreferrer");
+            }
+        }
+        return;
+    }
+}
+
+function highlightFocusedCard(cards) {
+    cards.forEach((card, idx) => {
+        if (idx === focusedCardIndex) {
+            card.classList.add("archive-card-focused");
+            card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else {
+            card.classList.remove("archive-card-focused");
+        }
+    });
+}
+
+function toggleShortcutsModal(force) {
+    const modal = document.getElementById("shortcuts-modal");
+    if (!modal) return;
+    if (typeof force === "boolean") {
+        modal.style.display = force ? "grid" : "none";
+    } else {
+        modal.style.display = modal.style.display === "none" ? "grid" : "none";
+    }
+}
+
+// --- SPECIMEN GENERATOR ---
 function generateSpecimenSVG(input) {
     const seed = getSeed(input);
     const lineA = pickColor(seed);

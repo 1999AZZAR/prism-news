@@ -3,11 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRISM | Swiss Archival Edition</title>
+    <title>PRISM | Digital Archive Bulletin — Swiss Archival Edition</title>
+    
+    <!-- Primary Metadata -->
+    <meta name="title" content="PRISM | Digital Archive Bulletin">
+    <meta name="description" content="High-density digital archive bulletin synthesizing real-time global intelligence signals across Technology, AI, World Politics, Disaster Response, Science, and Independent Media.">
+    <meta name="keywords" content="prism, digital archive, swiss design, news aggregator, rss reader, technology, world politics, disaster monitoring">
+    <meta name="author" content="Glass Gallery">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#8B1A1A">
+    <meta name="color-scheme" content="light">
+    
+    <!-- Canonical & Manifest -->
+    <link rel="canonical" href="https://prism.glassgallery.my.id/">
+    <link rel="manifest" href="/manifest.webmanifest">
+    
+    <!-- Favicons & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="PRISM">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PRISM Archive">
+    <meta property="og:url" content="https://prism.glassgallery.my.id/">
+    <meta property="og:title" content="PRISM | Digital Archive Bulletin">
+    <meta property="og:description" content="A chronological record of global intelligence signals selected from live sources and specialized telemetry.">
+    <meta property="og:image" content="https://prism.glassgallery.my.id/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="PRISM Swiss Archival Bulletin preview card">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://prism.glassgallery.my.id/">
+    <meta name="twitter:title" content="PRISM | Digital Archive Bulletin">
+    <meta name="twitter:description" content="A chronological record of global intelligence signals selected from live sources.">
+    <meta name="twitter:image" content="https://prism.glassgallery.my.id/og-image.png">
+
+    <!-- Typography & Icons Preconnect -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #E8E0D0;
@@ -428,6 +472,243 @@
             #news-feed { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
 
+        /* --- ARCHIVE TOOLBAR (SEARCH / LIVE / SHORTCUTS) --- */
+        .archive-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0 0.5rem;
+            padding: 0.65rem 0.85rem;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-md);
+        }
+
+        .archive-search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 13rem;
+            position: relative;
+        }
+
+        .archive-search-tag {
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            color: var(--muted-fg);
+            user-select: none;
+        }
+
+        #archive-filter-input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            padding: 0.45rem 0.65rem;
+            font: 500 0.8125rem/1.2 "JetBrains Mono", monospace;
+            color: var(--fg);
+            transition: border-color var(--motion-fast) var(--ease-state), box-shadow var(--motion-fast) var(--ease-state);
+        }
+
+        #archive-filter-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent);
+        }
+
+        #archive-filter-input::placeholder {
+            color: var(--muted-fg);
+            font-style: italic;
+        }
+
+        .archive-filter-clear {
+            position: absolute;
+            right: 0.45rem;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--muted-fg);
+            cursor: pointer;
+            padding: 0.15rem 0.35rem;
+        }
+
+        .archive-filter-clear:hover {
+            color: var(--accent);
+        }
+
+        .archive-toolbar-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .archive-live-pill {
+            font: 600 0.6875rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.35rem 0.6rem;
+            border-radius: var(--radius-sm);
+            background: color-mix(in srgb, #2E7D32 15%, var(--bg));
+            color: #2E7D32;
+            border: 1px solid color-mix(in srgb, #2E7D32 35%, transparent);
+            user-select: none;
+        }
+
+        .archive-live-pill.offline {
+            background: color-mix(in srgb, var(--accent) 15%, var(--bg));
+            color: var(--accent);
+            border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+        }
+
+        .archive-shortcuts-btn {
+            background: var(--bg);
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            padding: 0.35rem 0.6rem;
+            font: 600 0.6875rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.08em;
+            color: var(--fg);
+            cursor: pointer;
+            transition: background-color var(--motion-fast) var(--ease-state), border-color var(--motion-fast) var(--ease-state);
+        }
+
+        .archive-shortcuts-btn:hover {
+            background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Keyboard Focus Outline for Cards */
+        .archive-card.archive-card-focused {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent), 0 4px 16px rgba(139, 26, 26, 0.2) !important;
+            transform: translateY(-2px);
+        }
+
+        /* --- KEYBOARD SHORTCUTS MODAL --- */
+        .archive-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(42, 37, 32, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 100000;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            animation: modalFadeIn 0.2s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .archive-modal-card {
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-md);
+            max-width: 34rem;
+            width: 100%;
+            padding: 1.5rem;
+            box-shadow: 0 12px 36px rgba(42, 37, 32, 0.25);
+        }
+
+        .archive-modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--muted);
+            padding-bottom: 0.75rem;
+        }
+
+        .archive-modal-close {
+            background: none;
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            color: var(--fg);
+            font-size: 1.25rem;
+            line-height: 1;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+        }
+
+        .archive-modal-close:hover {
+            background: var(--accent);
+            color: #EFE9DC;
+            border-color: var(--accent);
+        }
+
+        .archive-shortcuts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.25rem 0;
+            font-size: 0.875rem;
+        }
+
+        .archive-shortcuts-table tr {
+            border-bottom: 1px solid color-mix(in srgb, var(--muted) 60%, transparent);
+        }
+
+        .archive-shortcuts-table td {
+            padding: 0.55rem 0.25rem;
+        }
+
+        .archive-shortcuts-table td:first-child {
+            width: 42%;
+            white-space: nowrap;
+        }
+
+        kbd {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--muted);
+            border-radius: 3px;
+            padding: 0.15rem 0.35rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .archive-modal-foot {
+            border-top: 1px solid var(--muted);
+            padding-top: 0.75rem;
+            text-align: right;
+        }
+
+        /* --- PRINT MEDIA STYLESHEET --- */
+        @media print {
+            body {
+                background: #FFFFFF !important;
+                color: #000000 !important;
+            }
+            .archive-nav,
+            .archive-toolbar,
+            .archive-btt,
+            .archive-pagination-wrap,
+            .paper-noise,
+            .archive-modal-backdrop {
+                display: none !important;
+            }
+            .archive-card {
+                break-inside: avoid;
+                border: 1px solid #CCCCCC !important;
+                box-shadow: none !important;
+                margin-bottom: 1.25rem !important;
+            }
+            a {
+                text-decoration: underline !important;
+                color: #000000 !important;
+            }
+            .archive-brand h1::after {
+                content: " — PRINT ARCHIVE LEDGER";
+                font-size: 1rem;
+                font-weight: normal;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
@@ -447,8 +728,11 @@
     <div class="archive-shell">
         <header class="archive-header">
             <div class="archive-brand">
-                <h1>PRISM</h1>
-                <p>Digital Archive Bulletin</p>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="/favicon.svg" width="34" height="34" alt="PRISM Emblem" style="border-radius: 6px; box-shadow: 0 2px 8px rgba(139, 26, 26, 0.25);">
+                    <h1>PRISM</h1>
+                </div>
+                <p>Digital Archive Bulletin · Swiss Archival Edition</p>
             </div>
             <nav class="archive-nav">
                 <button onclick="loadCategory('tech')" id="btn-tech" class="archive-nav-btn active">Tech</button>
@@ -477,6 +761,20 @@
             <p id="category-label">A chronological record of signals selected from live sources.</p>
         </section>
 
+        <!-- ARCHIVE TOOLBAR (SEARCH / LIVE STATUS / SHORTCUTS) -->
+        <section class="archive-toolbar" aria-label="Archive controls">
+            <div class="archive-search-box">
+                <span class="archive-search-tag" aria-hidden="true">[ FILTER ]</span>
+                <input type="text" id="archive-filter-input" placeholder="Filter current records... (Press / to focus)" autocomplete="off" spellcheck="false" aria-label="Filter records">
+                <button id="archive-filter-clear" class="archive-filter-clear" style="display: none;" title="Clear filter (Esc)" aria-label="Clear filter">×</button>
+            </div>
+            <div class="archive-toolbar-meta">
+                <span id="filter-count" class="archive-meta">210 RECORDS</span>
+                <span id="live-indicator" class="archive-live-pill" title="Network synchronization status">● LIVE</span>
+                <button id="btn-shortcuts-help" class="archive-shortcuts-btn" onclick="toggleShortcutsModal()" title="Keyboard shortcuts (?)">[ ? KEYS ]</button>
+            </div>
+        </section>
+
         <main>
             <section id="loading">
                 <div class="archive-loader-panel">
@@ -487,6 +785,32 @@
             <section id="news-feed"></section>
             <nav id="pagination-wrap" class="archive-pagination-wrap" style="display: none;" aria-label="Pagination controls"></nav>
         </main>
+    </div>
+
+    <!-- KEYBOARD SHORTCUTS MODAL -->
+    <div id="shortcuts-modal" class="archive-modal-backdrop" style="display: none;" onclick="if(event.target===this) toggleShortcutsModal(false)">
+        <div class="archive-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="archive-modal-head">
+                <span class="archive-meta">[ LEDGER // KEYBOARD CONTROLS ]</span>
+                <button class="archive-modal-close" onclick="toggleShortcutsModal(false)" aria-label="Close modal">×</button>
+            </div>
+            <h3 id="modal-title" style="margin: 0.75rem 0 0.5rem; font-size: 1.25rem;">Command & Navigation Shortcuts</h3>
+            <table class="archive-shortcuts-table">
+                <tbody>
+                    <tr><td><kbd>J</kbd> / <kbd>↓</kbd></td><td>Move selection to next bulletin</td></tr>
+                    <tr><td><kbd>K</kbd> / <kbd>↑</kbd></td><td>Move selection to previous bulletin</td></tr>
+                    <tr><td><kbd>Enter</kbd> / <kbd>O</kbd></td><td>Open selected bulletin in new tab</td></tr>
+                    <tr><td><kbd>/</kbd></td><td>Focus quick filter bar</td></tr>
+                    <tr><td><kbd>Esc</kbd></td><td>Clear filter or dismiss modal</td></tr>
+                    <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>Jump to previous / next page</td></tr>
+                    <tr><td><kbd>T</kbd> / <kbd>Home</kbd></td><td>Fly-out scroll to top</td></tr>
+                    <tr><td><kbd>?</kbd></td><td>Toggle this keybindings ledger</td></tr>
+                </tbody>
+            </table>
+            <div class="archive-modal-foot">
+                <p class="archive-meta" style="margin: 0;">SWISS-ARCHIVAL TELEMETRY · PRESS ESC TO RETURN</p>
+            </div>
+        </div>
     </div>
 
     <!-- FLY-OUT BACK TO TOP BUTTON -->
@@ -517,6 +841,6 @@
         })();
     </script>
 
-    <script src="app.js?v=swiss-archival-v5"></script>
+    <script src="app.js?v=swiss-archival-v6"></script>
 </body>
 </html>

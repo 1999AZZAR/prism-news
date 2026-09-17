@@ -1,0 +1,42 @@
+{
+  "name": "PRISM | Swiss Archival Edition",
+  "short_name": "PRISM",
+  "description": "High-density digital archive bulletin synthesizing real-time global intelligence signals and specialized feeds.",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E8E0D0",
+  "theme_color": "#8B1A1A",
+  "categories": [
+    "news",
+    "magazines",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -156,9 +156,6 @@ function renderPaginationControls(container, page, totalPages, totalItems) {
     const nextDisabled = page >= totalPages ? "disabled" : "";
     pagesHtml += `<button class="archive-page-btn" ${nextDisabled} onclick="goToPage(${page + 1})" aria-label="Next page">[ NEXT ]</button>`;
 
-    // Inline Back to Top Button
-    pagesHtml += `<button class="archive-page-btn archive-page-btt" onclick="scrollToTop()" aria-label="Back to top">[ ↑ TOP ]</button>`;
-
     container.innerHTML = `
         <p class="archive-pagination-info">PAGE ${String(page).padStart(2, "0")} OF ${String(totalPages).padStart(2, "0")} &bull; TOTAL ${totalItems} RECORDS</p>
         <div class="archive-pagination">

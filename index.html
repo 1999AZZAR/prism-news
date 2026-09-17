@@ -365,7 +365,7 @@
             border-color: var(--muted);
         }
 
-        /* --- BACK TO TOP (BTT) BUTTON --- */
+        /* --- FLY-OUT BACK TO TOP (BTT) BUTTON --- */
         .archive-btt {
             position: fixed;
             bottom: 2rem;
@@ -373,54 +373,49 @@
             z-index: 99999;
             border: 1.5px solid var(--accent);
             border-radius: var(--radius-sm);
-            background: var(--surface);
-            color: var(--accent);
-            padding: 0.65rem 0.9rem;
+            background: var(--accent);
+            color: #EFE9DC;
+            padding: 0.65rem 0.95rem;
             font: 700 0.8125rem/1 "JetBrains Mono", monospace;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(42, 37, 32, 0.16);
+            box-shadow: 0 4px 18px rgba(139, 26, 26, 0.28), 0 2px 6px rgba(42, 37, 32, 0.15);
+            /* FLY-OUT INITIAL STATE: Parked completely off-screen to the right */
+            transform: translateX(calc(100% + 2.5rem));
             opacity: 0;
             pointer-events: none;
-            transform: translateY(12px);
-            transition: opacity var(--motion-normal) var(--ease-state), transform var(--motion-normal) var(--ease-state), background-color var(--motion-fast) var(--ease-state), color var(--motion-fast) var(--ease-state), border-color var(--motion-fast) var(--ease-state);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.25s ease,
+                        background-color var(--motion-fast) var(--ease-state),
+                        box-shadow var(--motion-fast) var(--ease-state);
         }
 
+        /* FLY-OUT ACTIVE STATE: Slides in smoothly from the right when user scrolls */
         .archive-btt.visible {
+            transform: translateX(0) !important;
             opacity: 1 !important;
             pointer-events: auto !important;
-            transform: translateY(0) !important;
         }
 
         .archive-btt:hover {
-            background: var(--accent);
-            color: #EFE9DC;
-            border-color: var(--accent);
+            background: var(--accent-hover);
+            color: #FFFFFF;
+            transform: translateX(-3px) !important;
+            box-shadow: 0 6px 22px rgba(139, 26, 26, 0.36), 0 3px 8px rgba(42, 37, 32, 0.2);
         }
 
         .archive-btt:focus-visible {
             outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        .archive-page-btn.archive-page-btt {
-            margin-left: 0.5rem;
-            border: 1.5px solid var(--accent);
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .archive-page-btn.archive-page-btt:hover {
-            background: var(--accent);
-            color: #EFE9DC;
+            outline-offset: 3px;
         }
 
         @media (max-width: 48rem) {
             .archive-btt {
-                bottom: 1.25rem;
+                bottom: 1.5rem;
                 right: 1.25rem;
-                padding: 0.55rem 0.75rem;
+                padding: 0.55rem 0.8rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -492,8 +487,34 @@
         </main>
     </div>
 
+    <!-- FLY-OUT BACK TO TOP BUTTON -->
     <button id="btt-btn" class="archive-btt" aria-label="Back to top" onclick="scrollToTop()">[ ↑ TOP ]</button>
 
-    <script src="app.js?v=swiss-archival-v3"></script>
+    <script>
+        (function() {
+            function updateBTT() {
+                var btn = document.getElementById("btt-btn");
+                if (!btn) return;
+                var st = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+                if (st > 80) {
+                    btn.classList.add("visible");
+                } else {
+                    btn.classList.remove("visible");
+                }
+            }
+            window.addEventListener("scroll", updateBTT, { passive: true });
+            window.addEventListener("resize", updateBTT, { passive: true });
+            document.addEventListener("scroll", updateBTT, { passive: true });
+            if (document.body) document.body.addEventListener("scroll", updateBTT, { passive: true });
+            window.scrollToTop = function() {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                if (document.documentElement) document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+                if (document.body) document.body.scrollTo({ top: 0, behavior: "smooth" });
+            };
+            setTimeout(updateBTT, 100);
+        })();
+    </script>
+
+    <script src="app.js?v=swiss-archival-v4"></script>
 </body>
 </html>

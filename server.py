@@ -27,16 +27,70 @@ DB_FILE = os.environ.get('DB_FILE', 'prism.db')
 
 # --- CLASSIFICATION KEYWORDS ---
 CATEGORY_KEYWORDS = {
-    'tech': ['software', 'linux', 'apple', 'google', 'microsoft', 'code', 'app', 'iphone', 'android', 'crypto', 'data', 'cyber', 'robot'],
-    'ai': ['ai', 'gpt', 'llm', 'machine learning', 'neural', 'openai', 'deepmind', 'algorithm', 'intelligence'],
-    'gaming': ['game', 'nintendo', 'xbox', 'ps5', 'playstation', 'steam', 'esports', 'zelda', 'mario', 'rpg', 'fps'],
-    'science': ['space', 'nasa', 'research', 'study', 'physics', 'biology', 'climate', 'planet', 'quantum', 'lab'],
-    'business': ['stock', 'market', 'ceo', 'revenue', 'economy', 'bank', 'invest', 'trade', 'startup', 'ipo'],
-    'music': ['song', 'album', 'tour', 'band', 'artist', 'concert', 'track', 'remix', 'vinyl'],
-    'sports': ['score', 'team', 'league', 'cup', 'nba', 'nfl', 'football', 'soccer', 'cricket', 'champion', 'match'],
-    'food': ['recipe', 'cook', 'delicious', 'restaurant', 'taste', 'dinner', 'lunch', 'breakfast', 'chef', 'baking'],
-    'entertainment': ['movie', 'film', 'series', 'netflix', 'hollywood', 'actor', 'drama', 'cinema', 'show', 'trailer'],
-    'health': ['health', 'diet', 'wellness', 'disease', 'medical', 'therapy', 'mental', 'fitness', 'doctor', 'virus']
+    'tech': [
+        'software', 'linux', 'apple', 'google', 'microsoft', 'code', 'coding', 'app', 'apps', 'iphone', 'android',
+        'crypto', 'data', 'cyber', 'security', 'hardware', 'developer', 'programming', 'kernel', 'open source',
+        'rust', 'python', 'javascript', 'computing', 'cloud', 'devops', 'server', 'database', 'firmware', 'vulnerability'
+    ],
+    'ai': [
+        'ai', 'artificial intelligence', 'gpt', 'llm', 'machine learning', 'deep learning', 'neural', 'openai',
+        'deepmind', 'anthropic', 'claude', 'gemini', 'transformer', 'weights', 'inference', 'vision',
+        'agent', 'diffusion', 'prompt', 'rag', 'embeddings', 'chatbot', 'synthetic'
+    ],
+    'design': [
+        'design', 'ui', 'ux', 'typography', 'css', 'layout', 'aesthetic', 'branding', 'graphic', 'web design',
+        'interface', 'interaction', 'figma', 'creative', 'poster', 'visual', 'font', 'minimalism', 'archival',
+        'portfolio', 'sketch', 'illustration', 'colors'
+    ],
+    'gaming': [
+        'game', 'games', 'gaming', 'nintendo', 'xbox', 'ps5', 'playstation', 'steam', 'esports', 'zelda', 'mario',
+        'rpg', 'fps', 'unreal engine', 'unity', 'gameplay', 'modding', 'pc gaming', 'console'
+    ],
+    'science': [
+        'space', 'nasa', 'astronomy', 'physics', 'biology', 'chemistry', 'research', 'study', 'planet',
+        'galaxy', 'quantum', 'telescope', 'climate', 'ecology', 'lab', 'scientist', 'evolution', 'genetics',
+        'cosmos', 'mars', 'earth', 'fossil', 'experiment'
+    ],
+    'world': [
+        'world', 'global', 'geopolitics', 'international', 'diplomacy', 'treaty', 'un', 'europe', 'asia',
+        'americas', 'africa', 'middle east', 'war', 'conflict', 'peace', 'election', 'government', 'nation',
+        'foreign policy', 'president', 'prime minister', 'border', 'summit'
+    ],
+    'business': [
+        'stock', 'stocks', 'market', 'markets', 'ceo', 'revenue', 'economy', 'economic', 'bank', 'banking',
+        'finance', 'investment', 'investor', 'trade', 'startup', 'venture', 'ipo', 'earnings', 'inflation',
+        'fed', 'wall street', 'dollar', 'treasury', 'acquisition'
+    ],
+    'entertainment': [
+        'movie', 'movies', 'film', 'films', 'cinema', 'hollywood', 'netflix', 'series', 'actor', 'actress',
+        'director', 'tv', 'television', 'streaming', 'theater', 'drama', 'box office', 'celebrity', 'oscars',
+        'premiere', 'trailer', 'comedy'
+    ],
+    'music': [
+        'song', 'songs', 'album', 'albums', 'music', 'musician', 'band', 'artist', 'concert', 'tour',
+        'track', 'vinyl', 'spotify', 'guitar', 'instrumental', 'producer', 'soundtrack', 'hip hop', 'rock',
+        'pop', 'indie', 'jazz', 'billboard', 'record'
+    ],
+    'sports': [
+        'score', 'scores', 'team', 'league', 'tournament', 'championship', 'cup', 'nba', 'nfl', 'football',
+        'soccer', 'premier league', 'fifa', 'cricket', 'olympic', 'olympics', 'athlete', 'race', 'f1', 'tennis',
+        'basketball', 'baseball', 'golf', 'stadium', 'player'
+    ],
+    'food': [
+        'recipe', 'recipes', 'cooking', 'cook', 'chef', 'restaurant', 'restaurants', 'cuisine', 'dish',
+        'dinner', 'lunch', 'breakfast', 'baking', 'bakery', 'tasting', 'flavor', 'culinary', 'gastronomy',
+        'ingredient', 'delicious', 'foodie', 'wine', 'coffee'
+    ],
+    'travel': [
+        'travel', 'hotel', 'hotels', 'destination', 'flight', 'airline', 'airlines', 'tourism', 'tourist',
+        'vacation', 'resort', 'passport', 'visa', 'journey', 'island', 'backpacking', 'itinerary', 'expedition',
+        'cruise', 'airport', 'scenic', 'getaway'
+    ],
+    'health': [
+        'health', 'medicine', 'medical', 'hospital', 'doctor', 'wellness', 'nutrition', 'disease', 'mental health',
+        'fitness', 'therapy', 'virus', 'vaccine', 'clinical', 'pharmaceutical', 'diet', 'cardio', 'sleep',
+        'symptom', 'cancer', 'treatment', 'fda'
+    ]
 }
 
 # --- REDIS CONNECTION ---
@@ -184,13 +238,64 @@ def score_category(text):
 
     for cat, keywords in CATEGORY_KEYWORDS.items():
         for k in keywords:
-            if k in text:
-                scores[cat] += 1
+            if len(k) <= 3:
+                import re
+                scores[cat] += len(re.findall(r'\b' + re.escape(k) + r'\b', text))
+            else:
+                scores[cat] += text.count(k)
 
     best_cat = max(scores, key=scores.get)
-    if scores[best_cat] > 0:
+    if scores[best_cat] >= 2:
         return best_cat, scores[best_cat]
     return 'other', 0
+
+
+def smart_classify(feed_title, feed_desc, entries):
+    """Multi-factor classification with weighted scoring."""
+    scores = {cat: 0 for cat in CATEGORY_KEYWORDS}
+
+    # 1. Feed title (weight: 4)
+    title_lower = (feed_title or "").lower()
+    for cat, kws in CATEGORY_KEYWORDS.items():
+        for kw in kws:
+            if len(kw) <= 3:
+                import re
+                if re.search(r'\b' + re.escape(kw) + r'\b', title_lower):
+                    scores[cat] += 4
+            elif kw in title_lower:
+                scores[cat] += 4
+
+    # 2. Feed description (weight: 2)
+    desc_lower = (feed_desc or "").lower()
+    for cat, kws in CATEGORY_KEYWORDS.items():
+        for kw in kws:
+            if kw in desc_lower:
+                scores[cat] += 2
+
+    # 3. Entries title + summary + tags (weight: 1 for text, 3 for category tags)
+    for entry in (entries or [])[:20]:
+        title = getattr(entry, 'title', '')
+        summary = getattr(entry, 'summary', '')
+        entry_text = f"{title} {summary}".lower()
+        for cat, kws in CATEGORY_KEYWORDS.items():
+            for kw in kws:
+                if kw in entry_text:
+                    scores[cat] += 1
+
+        tags = getattr(entry, 'tags', [])
+        if tags and isinstance(tags, list):
+            for t in tags:
+                tag_term = (t.get('term', '') if isinstance(t, dict) else str(t)).lower()
+                for cat, kws in CATEGORY_KEYWORDS.items():
+                    if any(kw in tag_term for kw in kws):
+                        scores[cat] += 3
+
+    best_cat = max(scores, key=scores.get)
+    best_score = scores[best_cat]
+    if best_score >= 3:
+        return best_cat, best_score
+    return 'other', 0
+
 
 
 # --- FETCHERS ---
@@ -383,70 +488,156 @@ def fetch_category(cat):
 
 # --- DISCOVERY & CLASSIFICATION ---
 def find_rss_link(html, base_url):
+    """Extract RSS or Atom feed link with multi-pattern discovery and fallback endpoints."""
     try:
         soup = BeautifulSoup(html, 'html.parser')
-        link = soup.find('link', type='application/rss+xml')
-        if link:
-            return urljoin(base_url, link.get('href'))
-        link = soup.find('link', type='application/atom+xml')
-        if link:
-            return urljoin(base_url, link.get('href'))
-        return None
+        # 1. Standard <link rel="alternate" type="...">
+        for link in soup.find_all('link'):
+            rel = [r.lower() for r in link.get('rel', [])] if isinstance(link.get('rel'), list) else str(link.get('rel', '')).lower()
+            ltype = link.get('type', '').lower()
+            if 'alternate' in rel or 'feed' in rel:
+                if any(t in ltype for t in ('rss', 'atom', 'xml')):
+                    href = link.get('href')
+                    if href:
+                        return urljoin(base_url, href)
+
+        # 2. Direct <link type="application/rss+xml"> (even without rel="alternate")
+        for link in soup.find_all('link'):
+            ltype = link.get('type', '').lower()
+            if 'application/rss+xml' in ltype or 'application/atom+xml' in ltype:
+                href = link.get('href')
+                if href:
+                    return urljoin(base_url, href)
+
+        # 3. Look for <a> tags with feed links
+        for a in soup.find_all('a', href=True):
+            href = a['href'].lower()
+            if href.endswith(('.rss', '.atom', '/feed', '/rss', '/feed.xml', '/rss.xml')):
+                return urljoin(base_url, a['href'])
     except Exception:
-        return None
+        pass
+
+    # 4. Probe common endpoints on domain root
+    try:
+        parsed = urlparse(base_url)
+        origin = f"{parsed.scheme}://{parsed.netloc}"
+        for path in ['/feed', '/feed/', '/rss', '/rss.xml', '/atom.xml']:
+            candidate = origin + path
+            try:
+                r = requests.head(candidate, timeout=2, headers={'User-Agent': USER_AGENT}, allow_redirects=True)
+                if r.status_code == 200:
+                    ctype = r.headers.get('Content-Type', '').lower()
+                    if any(t in ctype for t in ('xml', 'rss', 'atom')):
+                        return candidate
+            except Exception:
+                continue
+    except Exception:
+        pass
+
+    return None
+
+
+EXCLUDED_DOMAINS = {
+    'self', '', 'github.com', 'youtube.com', 'youtu.be', 'twitter.com', 'x.com',
+    'reddit.com', 'facebook.com', 'instagram.com', 'linkedin.com', 'news.ycombinator.com',
+    'google.com', 't.co', 'bit.ly', 'medium.com'
+}
 
 
 def discover_feeds(articles):
-    import random
+    """Auto-discover feeds from incoming articles across all categories."""
     if not articles:
         return
 
-    targets = random.sample(articles, min(len(articles), 2))
+    import random
+    candidates = []
+    seen_domains = set()
+    for item in articles:
+        domain = item.get('domain', '').lower()
+        if domain and domain not in EXCLUDED_DOMAINS and domain not in seen_domains:
+            seen_domains.add(domain)
+            candidates.append(item)
+
+    if not candidates:
+        return
+
+    targets = random.sample(candidates, min(len(candidates), 5))
     for t in targets:
         domain = t.get('domain', '')
-        if domain in ('Self', '') or 'github' in domain or 'youtube' in domain or 'ycombinator' in domain:
+        url = t.get('url', '')
+        if not url:
             continue
 
         try:
-            r = requests.get(t['url'], timeout=4, headers={'User-Agent': USER_AGENT})
+            with get_db() as conn:
+                existing = conn.execute(
+                    "SELECT 1 FROM feeds WHERE url LIKE ? OR name LIKE ? LIMIT 1",
+                    (f"%{domain}%", f"%{domain}%")
+                ).fetchone()
+                if existing:
+                    continue
+
+            r = requests.get(url, timeout=5, headers={'User-Agent': USER_AGENT})
             if r.status_code != 200:
                 continue
 
-            feed_url = find_rss_link(r.text, t['url'])
-            if feed_url:
-                with get_db() as conn:
-                    exists = conn.execute("SELECT 1 FROM feeds WHERE url=?", (feed_url,)).fetchone()
-                    if not exists:
-                        conn.execute(
-                            "INSERT OR IGNORE INTO feeds (name, url, category, type, enabled) VALUES (?, ?, 'other', 'rss', 1)",
-                            (domain, feed_url)
-                        )
-                        conn.commit()
-                        print(f"[Discovery] Discovered new feed: {domain} -> {feed_url}")
+            feed_url = find_rss_link(r.text, url)
+            if not feed_url:
+                continue
+
+            # Validate candidate feed
+            feed_resp = requests.get(feed_url, timeout=5, headers={'User-Agent': USER_AGENT})
+            if feed_resp.status_code != 200:
+                continue
+
+            d = feedparser.parse(feed_resp.content)
+            if not d.entries:
+                continue
+
+            feed_name = d.feed.get('title') or domain
+            feed_desc = d.feed.get('description', '')
+
+            # Smart classification
+            cat, score = smart_classify(feed_name, feed_desc, d.entries)
+
+            with get_db() as conn:
+                conn.execute(
+                    "INSERT OR IGNORE INTO feeds (name, url, category, type, enabled) VALUES (?, ?, ?, 'rss', 1)",
+                    (feed_name[:60], feed_url, cat)
+                )
+                conn.commit()
+                print(f"[Discovery] Discovered & classified '{feed_name}' -> '{cat}' (score: {score})")
+
         except Exception:
             pass
 
 
 def classify_pending_feeds():
+    """Re-classify any feeds in 'other' category using multi-factor signals."""
     try:
         with get_db() as conn:
-            pending = conn.execute("SELECT * FROM feeds WHERE category='other' AND enabled=1 LIMIT 5").fetchall()
+            pending = conn.execute("SELECT * FROM feeds WHERE category='other' AND enabled=1 LIMIT 10").fetchall()
 
         for feed in pending:
-            items, full_text = fetch_rss(feed['url'], feed['name'])
-            if not full_text or not items:
-                # Disable broken or empty feeds
-                with get_db() as conn:
-                    conn.execute("UPDATE feeds SET enabled=0 WHERE id=?", (feed['id'],))
-                    conn.commit()
-                continue
+            try:
+                resp = requests.get(feed['url'], timeout=6, headers={'User-Agent': USER_AGENT})
+                if resp.status_code != 200:
+                    continue
+                d = feedparser.parse(resp.content)
+                if not d.entries:
+                    continue
 
-            cat, score = score_category(full_text)
-            if score > 2:
-                with get_db() as conn:
-                    conn.execute("UPDATE feeds SET category=? WHERE id=?", (cat, feed['id']))
-                    conn.commit()
-                print(f"[Classify] Promoted {feed['name']} to {cat} (Score: {score})")
+                feed_title = d.feed.get('title') or feed['name']
+                feed_desc = d.feed.get('description', '')
+                cat, score = smart_classify(feed_title, feed_desc, d.entries)
+
+                if cat != 'other' and score >= 3:
+                    with get_db() as conn:
+                        conn.execute("UPDATE feeds SET category=?, name=? WHERE id=?", (cat, feed_title[:60], feed['id']))
+                        conn.commit()
+                    print(f"[Classify] Promoted '{feed['name']}' to '{cat}' (score: {score})")
+            except Exception:
+                continue
     except Exception as e:
         print(f"[Classify] Error: {e}")
 
@@ -457,19 +648,19 @@ def update_all_categories():
     with get_db() as conn:
         cats = [row[0] for row in conn.execute("SELECT DISTINCT category FROM feeds WHERE enabled=1").fetchall()]
 
-    all_tech_articles = []
+    discovery_pool = []
     for cat in cats:
         try:
             articles = fetch_category(cat)
-            if cat == 'tech':
-                all_tech_articles = articles
+            if articles:
+                discovery_pool.extend(articles[:4])
             time.sleep(0.2)
         except Exception as e:
             print(f"[Worker] Error updating {cat}: {e}")
 
-    if all_tech_articles:
+    if discovery_pool:
         try:
-            discover_feeds(all_tech_articles)
+            discover_feeds(discovery_pool)
             classify_pending_feeds()
         except Exception as e:
             print(f"[Worker] Discovery cycle error: {e}")

@@ -370,17 +370,17 @@
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            z-index: 90;
-            border: 1px solid var(--muted);
+            z-index: 99999;
+            border: 1.5px solid var(--accent);
             border-radius: var(--radius-sm);
             background: var(--surface);
             color: var(--accent);
-            padding: 0.6rem 0.85rem;
-            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            padding: 0.65rem 0.9rem;
+            font: 700 0.8125rem/1 "JetBrains Mono", monospace;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(42, 37, 32, 0.08);
+            box-shadow: 0 4px 16px rgba(42, 37, 32, 0.16);
             opacity: 0;
             pointer-events: none;
             transform: translateY(12px);
@@ -388,9 +388,9 @@
         }
 
         .archive-btt.visible {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            transform: translateY(0) !important;
         }
 
         .archive-btt:hover {
@@ -404,11 +404,23 @@
             outline-offset: 2px;
         }
 
+        .archive-page-btn.archive-page-btt {
+            margin-left: 0.5rem;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .archive-page-btn.archive-page-btt:hover {
+            background: var(--accent);
+            color: #EFE9DC;
+        }
+
         @media (max-width: 48rem) {
             .archive-btt {
                 bottom: 1.25rem;
                 right: 1.25rem;
-                padding: 0.5rem 0.7rem;
+                padding: 0.55rem 0.75rem;
             }
         }
 
@@ -482,6 +494,6 @@
 
     <button id="btt-btn" class="archive-btt" aria-label="Back to top" onclick="scrollToTop()">[ ↑ TOP ]</button>
 
-    <script src="app.js?v=swiss-archival-v2"></script>
+    <script src="app.js?v=swiss-archival-v3"></script>
 </body>
 </html>

@@ -29,17 +29,30 @@ if (document.readyState === "loading") {
 }
 
 // --- BACK TO TOP (BTT) SCROLL CONTROLLER ---
-const bttBtn = document.getElementById("btt-btn");
-window.addEventListener("scroll", () => {
-    if (window.scrollY > 300) {
-        bttBtn?.classList.add("visible");
+function checkScrollBTT() {
+    const btn = document.getElementById("btt-btn");
+    if (!btn) return;
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || window.scrollY || 0;
+    if (scrollPos > 100) {
+        btn.classList.add("visible");
     } else {
-        bttBtn?.classList.remove("visible");
+        btn.classList.remove("visible");
     }
-}, { passive: true });
+}
+
+window.addEventListener("scroll", checkScrollBTT, { passive: true });
+document.addEventListener("scroll", checkScrollBTT, { passive: true });
+window.addEventListener("load", checkScrollBTT);
+document.addEventListener("DOMContentLoaded", checkScrollBTT);
 
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (document.documentElement) {
+        document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    if (document.body) {
+        document.body.scrollTo({ top: 0, behavior: "smooth" });
+    }
 }
 
 async function loadCategory(catKey, force = false) {
@@ -142,6 +155,9 @@ function renderPaginationControls(container, page, totalPages, totalItems) {
     // Next Button
     const nextDisabled = page >= totalPages ? "disabled" : "";
     pagesHtml += `<button class="archive-page-btn" ${nextDisabled} onclick="goToPage(${page + 1})" aria-label="Next page">[ NEXT ]</button>`;
+
+    // Inline Back to Top Button
+    pagesHtml += `<button class="archive-page-btn archive-page-btt" onclick="scrollToTop()" aria-label="Back to top">[ ↑ TOP ]</button>`;
 
     container.innerHTML = `
         <p class="archive-pagination-info">PAGE ${String(page).padStart(2, "0")} OF ${String(totalPages).padStart(2, "0")} &bull; TOTAL ${totalItems} RECORDS</p>

@@ -9,6 +9,8 @@ services:
       - REDIS_HOST=shared-redis
       - REDIS_PORT=6379
       - REDIS_DB=0
+    volumes:
+      - ./prism.db:/app/prism.db
     networks:
       - prism-net
       - shared-redis-net

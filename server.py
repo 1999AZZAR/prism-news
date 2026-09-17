@@ -202,7 +202,7 @@ def fetch_hn():
         if r.status_code == 200:
             d = feedparser.parse(r.content)
             stories = []
-            for entry in d.entries[:30]:
+            for entry in d.entries[:50]:
                 link = getattr(entry, 'link', None)
                 title = getattr(entry, 'title', None)
                 if not link or not title:
@@ -269,7 +269,7 @@ def fetch_rss(url, source_name):
         items = []
         full_text_for_scoring = ""
 
-        for entry in d.entries[:15]:
+        for entry in d.entries[:210]:
             link = getattr(entry, 'link', None)
             title = getattr(entry, 'title', None)
             if not title or not link:
@@ -285,6 +285,22 @@ def fetch_rss(url, source_name):
 
             author = getattr(entry, 'author', None) or d.feed.get('title', source_name)
 
+            # Extract media enclosure or thumbnail image if available
+            image_url = None
+            if hasattr(entry, 'media_content') and entry.media_content:
+                for mc in entry.media_content:
+                    if isinstance(mc, dict) and (mc.get('medium') == 'image' or 'image' in mc.get('type', '')):
+                        image_url = mc.get('url')
+                        break
+            if not image_url and hasattr(entry, 'enclosures') and entry.enclosures:
+                for enc in entry.enclosures:
+                    if isinstance(enc, dict) and 'image' in enc.get('type', ''):
+                        image_url = enc.get('href') or enc.get('url')
+                        break
+            if not image_url and hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
+                if isinstance(entry.media_thumbnail, list) and len(entry.media_thumbnail) > 0:
+                    image_url = entry.media_thumbnail[0].get('url')
+
             items.append({
                 'title': title,
                 'url': link,
@@ -294,7 +310,8 @@ def fetch_rss(url, source_name):
                 'domain': get_domain(link),
                 'commentsUrl': link,
                 'id': getattr(entry, 'id', link),
-                'source_name': source_name
+                'source_name': source_name,
+                'image': image_url
             })
 
         return items, full_text_for_scoring
@@ -339,7 +356,7 @@ def fetch_category(cat):
             unique_news.append(item)
 
     unique_news.sort(key=lambda x: x.get('time', 0), reverse=True)
-    unique_news = unique_news[:150]
+    unique_news = unique_news[:210]
 
     if unique_news:
         json_data = json.dumps(unique_news)

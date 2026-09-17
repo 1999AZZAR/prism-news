@@ -286,6 +286,132 @@
             grid-column: 1 / -1;
         }
 
+        /* --- VISUAL MEDIA (IMAGE / SPECIMEN) --- */
+        .archive-visual img.archive-img {
+            width: 100%;
+            height: 100%;
+            min-height: 8rem;
+            max-height: 12rem;
+            object-fit: cover;
+            display: block;
+            filter: contrast(0.96) sepia(0.06);
+            transition: filter var(--motion-fast) var(--ease-state), transform var(--motion-fast) var(--ease-state);
+        }
+
+        .archive-card:hover .archive-visual img.archive-img {
+            filter: contrast(1.02) sepia(0);
+            transform: scale(1.02);
+        }
+
+        /* --- PAGINATION (SWISS ARCHIVAL) --- */
+        .archive-pagination-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.85rem;
+            margin: 1.5rem 0 3rem;
+            padding: 1.25rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-md);
+        }
+
+        .archive-pagination-info {
+            margin: 0;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted-fg);
+            text-align: center;
+        }
+
+        .archive-pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .archive-page-btn {
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            background: var(--bg);
+            color: var(--fg);
+            padding: 0.45rem 0.65rem;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color var(--motion-fast) var(--ease-state), color var(--motion-fast) var(--ease-state), border-color var(--motion-fast) var(--ease-state);
+        }
+
+        .archive-page-btn:hover:not(:disabled) {
+            background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .archive-page-btn.active {
+            background: var(--accent);
+            color: #EFE9DC;
+            border-color: var(--accent);
+            cursor: default;
+        }
+
+        .archive-page-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            border-color: var(--muted);
+        }
+
+        /* --- BACK TO TOP (BTT) BUTTON --- */
+        .archive-btt {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 90;
+            border: 1px solid var(--muted);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--accent);
+            padding: 0.6rem 0.85rem;
+            font: 600 0.75rem/1 "JetBrains Mono", monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(42, 37, 32, 0.08);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity var(--motion-normal) var(--ease-state), transform var(--motion-normal) var(--ease-state), background-color var(--motion-fast) var(--ease-state), color var(--motion-fast) var(--ease-state), border-color var(--motion-fast) var(--ease-state);
+        }
+
+        .archive-btt.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .archive-btt:hover {
+            background: var(--accent);
+            color: #EFE9DC;
+            border-color: var(--accent);
+        }
+
+        .archive-btt:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 48rem) {
+            .archive-btt {
+                bottom: 1.25rem;
+                right: 1.25rem;
+                padding: 0.5rem 0.7rem;
+            }
+        }
+
         @media (min-width: 48rem) {
             .archive-shell { padding: 1.5rem; }
             #news-feed { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -350,9 +476,12 @@
                 </div>
             </section>
             <section id="news-feed"></section>
+            <nav id="pagination-wrap" class="archive-pagination-wrap" style="display: none;" aria-label="Pagination controls"></nav>
         </main>
     </div>
 
-    <script src="app.js?v=swiss-archival"></script>
+    <button id="btt-btn" class="archive-btt" aria-label="Back to top" onclick="scrollToTop()">[ ↑ TOP ]</button>
+
+    <script src="app.js?v=swiss-archival-v2"></script>
 </body>
 </html>

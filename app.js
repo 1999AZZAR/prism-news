@@ -1,5 +1,8 @@
 let currentCategory = "tech";
 let isLoading = false;
+let currentStories = [];
+let currentPage = 1;
+const ITEMS_PER_PAGE = 21;
 
 const categoryLabels = {
     tech: "Technological Frontier",
@@ -25,16 +28,35 @@ if (document.readyState === "loading") {
     loadCategory("tech", true);
 }
 
+// --- BACK TO TOP (BTT) SCROLL CONTROLLER ---
+const bttBtn = document.getElementById("btt-btn");
+window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+        bttBtn?.classList.add("visible");
+    } else {
+        bttBtn?.classList.remove("visible");
+    }
+}, { passive: true });
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 async function loadCategory(catKey, force = false) {
     if (!force && isLoading && currentCategory === catKey) return;
 
     currentCategory = catKey;
     isLoading = true;
+    currentPage = 1;
+    currentStories = [];
     syncCategoryMeta(catKey);
     syncNav(catKey);
 
     const feed = document.getElementById("news-feed");
     const loader = document.getElementById("loading");
+    const pagination = document.getElementById("pagination-wrap");
+
+    if (pagination) pagination.style.display = "none";
     loader.style.display = "grid";
     feed.style.display = "none";
     feed.innerHTML = "";
@@ -55,11 +77,12 @@ async function loadCategory(catKey, force = false) {
                 </article>
             `;
             feed.style.display = "grid";
+            if (pagination) pagination.style.display = "none";
             return;
         }
 
-        stories.forEach((story, index) => feed.appendChild(createCard(story, index)));
-        feed.style.display = "grid";
+        currentStories = stories;
+        renderCurrentPage();
     } catch (error) {
         console.error(error);
         loader.innerHTML = `
@@ -68,8 +91,77 @@ async function loadCategory(catKey, force = false) {
                 <p>Archive stream temporarily unavailable.</p>
             </div>
         `;
+        if (pagination) pagination.style.display = "none";
     } finally {
         isLoading = false;
+    }
+}
+
+function renderCurrentPage() {
+    const feed = document.getElementById("news-feed");
+    const pagination = document.getElementById("pagination-wrap");
+    feed.innerHTML = "";
+
+    const totalItems = currentStories.length;
+    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+    const pageStories = currentStories.slice(startIndex, endIndex);
+
+    pageStories.forEach((story, i) => {
+        feed.appendChild(createCard(story, startIndex + i));
+    });
+    feed.style.display = "grid";
+
+    // Pagination controls: only render when total records exceed 21 items
+    if (totalItems > ITEMS_PER_PAGE && pagination) {
+        renderPaginationControls(pagination, currentPage, totalPages, totalItems);
+        pagination.style.display = "flex";
+    } else if (pagination) {
+        pagination.style.display = "none";
+    }
+}
+
+function renderPaginationControls(container, page, totalPages, totalItems) {
+    let pagesHtml = "";
+
+    // Previous Button
+    const prevDisabled = page <= 1 ? "disabled" : "";
+    pagesHtml += `<button class="archive-page-btn" ${prevDisabled} onclick="goToPage(${page - 1})" aria-label="Previous page">[ PREV ]</button>`;
+
+    // Numeric Buttons
+    for (let p = 1; p <= totalPages; p++) {
+        const activeClass = p === page ? "active" : "";
+        pagesHtml += `<button class="archive-page-btn ${activeClass}" onclick="goToPage(${p})" aria-label="Page ${p}">[ ${String(p).padStart(2, "0")} ]</button>`;
+    }
+
+    // Next Button
+    const nextDisabled = page >= totalPages ? "disabled" : "";
+    pagesHtml += `<button class="archive-page-btn" ${nextDisabled} onclick="goToPage(${page + 1})" aria-label="Next page">[ NEXT ]</button>`;
+
+    container.innerHTML = `
+        <p class="archive-pagination-info">PAGE ${String(page).padStart(2, "0")} OF ${String(totalPages).padStart(2, "0")} &bull; TOTAL ${totalItems} RECORDS</p>
+        <div class="archive-pagination">
+            ${pagesHtml}
+        </div>
+    `;
+}
+
+function goToPage(page) {
+    const totalPages = Math.ceil(currentStories.length / ITEMS_PER_PAGE);
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    currentPage = page;
+    renderCurrentPage();
+
+    const hero = document.querySelector(".archive-hero");
+    if (hero) {
+        hero.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 }
 
@@ -101,9 +193,13 @@ function createCard(story, index) {
     const safeCommentsUrl = safeUrlOrFallback(story.commentsUrl);
     const specimenSVG = generateSpecimenSVG(`${safeTitle}|${safeDomain}|${index}`);
 
+    const visualHtml = story.image ?
+        `<img src="${safeUrlOrFallback(story.image)}" alt="${safeTitle}" class="archive-img" loading="lazy" onerror="this.onerror=null; this.parentElement.innerHTML=\`${specimenSVG.replace(/"/g, '&quot;')}\`;" />` :
+        specimenSVG;
+
     card.innerHTML = `
         <div class="archive-visual" aria-hidden="true">
-            ${specimenSVG}
+            ${visualHtml}
         </div>
 
         <header class="archive-card-head">
